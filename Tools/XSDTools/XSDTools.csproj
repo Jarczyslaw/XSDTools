@@ -41,7 +41,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FileDownloader.cs" />
+    <Compile Include="ProcessLauncher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReplacedDependencies.cs" />
+    <Compile Include="XmlProcessor.cs" />
+    <Compile Include="XsdProcessor.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

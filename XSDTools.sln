@@ -31,6 +31,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XmlSampleGenerator", "Tools
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XSDTools", "Tools\XSDTools\XSDTools.csproj", "{0827D56F-C220-48AD-A5D2-9FD6AA17A2A4}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E3EED67F-BB6C-4673-8B5C-7256B92CD862}"
+	ProjectSection(SolutionItems) = preProject
+		_todo.txt = _todo.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
