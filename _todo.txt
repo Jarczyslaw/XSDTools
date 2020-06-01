@@ -1,0 +1,5 @@
+pobieranie i podmiana œcie¿ek
+generowanie modeli
+generowanie exampli
+walidacja xml
+generowanie xsd from xml?

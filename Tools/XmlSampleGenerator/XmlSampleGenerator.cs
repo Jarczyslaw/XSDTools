@@ -134,6 +134,17 @@ namespace Microsoft.Xml.XMLGen
             AnyType = XmlSchemaType.GetBuiltInComplexType(XmlTypeCode.Item);
         }
 
+        public static void CreateSampleFile(string xsdPath, string rootElement, string xmlPath)
+        {
+            using (var textWriter = new XmlTextWriter(xsdPath, null))
+            {
+                textWriter.Formatting = Formatting.Indented;
+                XmlQualifiedName qname = new XmlQualifiedName(rootElement);
+                XmlSampleGenerator generator = new XmlSampleGenerator(xmlPath, qname);
+                generator.WriteXml(textWriter);
+            }
+        }
+
         public void WriteXml(XmlWriter writer)
         {
             this.writer = writer ?? throw new ArgumentNullException("writer");
