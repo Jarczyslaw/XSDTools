@@ -19,46 +19,52 @@ namespace XSDTools
 
         public List<string> RemoveExternalDependenciesFromFile(string filePath)
         {
-            var files = new List<string>();
-            RemoveExternalDependencies(Path.GetFullPath(filePath), new List<string> { filePath }, files);
-            return files;
+            return RemoveExternalDependenciesFromFiles(Path.GetDirectoryName(filePath), new List<string> { Path.GetFileName(filePath) });
         }
 
         public List<string> RemoveExternalDependenciesFromFiles(string folderPath)
         {
+            return RemoveExternalDependenciesFromFiles(folderPath, GetXsdFileNames(folderPath));
+        }
+
+        public List<string> RemoveExternalDependenciesFromFiles(string folderPath, List<string> inputFileNames)
+        {
             var files = new List<string>();
-            RemoveExternalDependencies(folderPath, GetXsdFiles(folderPath), files);
+            var downloadedFiles = new List<string>();
+            RemoveExternalDependencies(folderPath, inputFileNames, downloadedFiles, files);
             return files;
         }
 
-        private void RemoveExternalDependencies(string targetPath, List<string> inputXsdFilePaths, List<string> outputXsdFilePaths)
+        private void RemoveExternalDependencies(string inputPath, List<string> inputFileNames, List<string> downloadedFiles, List<string> outputFilePaths)
         {
-            foreach (var inputFile in inputXsdFilePaths)
+            foreach (var inputFile in inputFileNames)
             {
-                outputXsdFilePaths.Add(inputFile);
-                var dependencies = xmlProcessor.ReplaceExternalDependencies(inputFile);
+                var inputFilePath = Path.Combine(inputPath, inputFile);
+                outputFilePaths.Add(inputFilePath);
+                var dependencies = xmlProcessor.ReplaceExternalDependencies(inputFilePath);
                 var newDependencies = new List<string>();
                 foreach (var dependency in dependencies)
                 {
-                    var targetFilePath = Path.Combine(targetPath, dependency.ReplacedWith);
-                    if (!File.Exists(targetFilePath))
+                    var targetFilePath = Path.Combine(inputPath, dependency.ReplacedWith);
+                    if (!downloadedFiles.Contains(targetFilePath))
                     {
                         fileDownloader.DownloadAs(dependency.OriginalPath, targetFilePath);
-                        newDependencies.Add(targetFilePath);
+                        downloadedFiles.Add(targetFilePath);
                     }
+                    newDependencies.Add(targetFilePath);
                 }
-                RemoveExternalDependencies(targetPath, newDependencies, outputXsdFilePaths);
+                RemoveExternalDependencies(inputPath, newDependencies, downloadedFiles, outputFilePaths);
             }
         }
 
-        public void CreateModels(List<string> inputXsdFilePaths, string modelsFilePath, string modelsNamespace)
+        public void CreateModels(List<string> inputFilePaths, string modelsFilePath, string modelsNamespace)
         {
             var hackFilePath = string.Empty;
             try
             {
                 hackFilePath = CreateHackFile(modelsFilePath);
-                inputXsdFilePaths.Add(hackFilePath);
-                processLauncher.RunXsd(xsdExePath, inputXsdFilePaths, Path.GetFullPath(modelsFilePath), modelsNamespace);
+                inputFilePaths.Add(hackFilePath);
+                processLauncher.RunXsd(xsdExePath, inputFilePaths, Path.GetDirectoryName(modelsFilePath), modelsNamespace);
             }
             finally
             {
@@ -71,7 +77,7 @@ namespace XSDTools
 
         private string CreateHackFile(string modelsFilePath)
         {
-            var hackPath = Path.GetFullPath(modelsFilePath);
+            var hackPath = Path.GetDirectoryName(modelsFilePath);
             var hackFileName = Path.GetFileNameWithoutExtension(modelsFilePath);
             var hackFilePath = Path.Combine(hackPath, hackFileName + ".xsd");
             const string hackFileContent = @"<?xml version=""1.0"" encoding=""utf-8""?>
@@ -83,6 +89,13 @@ namespace XSDTools
         public List<string> GetXsdFiles(string folderPath)
         {
             return Directory.GetFiles(folderPath, "*.xsd")
+                .ToList();
+        }
+
+        public List<string> GetXsdFileNames(string folderPath)
+        {
+            return GetXsdFiles(folderPath)
+                .Select(Path.GetFileName)
                 .ToList();
         }
 

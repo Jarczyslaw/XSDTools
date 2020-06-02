@@ -25,7 +25,7 @@ namespace XSDTools
             {
                 args += "/n:" + targetNamespace + " ";
             }
-            return string.Format("/c {0} /n:{1}", args, targetNamespace);
+            return args.Trim();
         }
 
         private void StartProcess(string exePath, string arguments = null, bool useShellExecute = false)

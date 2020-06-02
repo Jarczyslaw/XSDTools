@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "App", "App", "{82F62358-D967-4081-9B1E-9DE7BC44B10C}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Apps", "Apps", "{82F62358-D967-4081-9B1E-9DE7BC44B10C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{0C3B7AE4-866A-4085-9819-34B36F852B32}"
 EndProject
@@ -35,6 +35,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		_todo.txt = _todo.txt
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Console", "Console", "{C755E3B4-CD4D-461B-B6DC-57A4046D4C44}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XSDTools.ConsoleApp", "Apps\Console\XSDTools.ConsoleApp\XSDTools.ConsoleApp.csproj", "{A66AF431-DBBF-4373-AFD3-8B6F94F55DE0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -78,6 +82,10 @@ Global
 		{0827D56F-C220-48AD-A5D2-9FD6AA17A2A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0827D56F-C220-48AD-A5D2-9FD6AA17A2A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0827D56F-C220-48AD-A5D2-9FD6AA17A2A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A66AF431-DBBF-4373-AFD3-8B6F94F55DE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A66AF431-DBBF-4373-AFD3-8B6F94F55DE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A66AF431-DBBF-4373-AFD3-8B6F94F55DE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A66AF431-DBBF-4373-AFD3-8B6F94F55DE0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -94,6 +102,8 @@ Global
 		{7519097D-59FF-4717-A043-C083A7AA9A5D} = {BA5304EF-4448-497F-B7EC-D095C5BC4412}
 		{44F03B5D-002E-442F-B0E7-04AD827E7370} = {0C3B7AE4-866A-4085-9819-34B36F852B32}
 		{0827D56F-C220-48AD-A5D2-9FD6AA17A2A4} = {0C3B7AE4-866A-4085-9819-34B36F852B32}
+		{C755E3B4-CD4D-461B-B6DC-57A4046D4C44} = {82F62358-D967-4081-9B1E-9DE7BC44B10C}
+		{A66AF431-DBBF-4373-AFD3-8B6F94F55DE0} = {C755E3B4-CD4D-461B-B6DC-57A4046D4C44}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CF70E8FA-19B6-468E-AEEA-2C0388D16FFD}
