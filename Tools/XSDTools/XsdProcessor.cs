@@ -51,14 +51,14 @@ namespace XSDTools
             }
         }
 
-        public void CreateModels(List<string> inputXsdFilePaths, string targetPath, string targetNamespace)
+        public void CreateModels(List<string> inputXsdFilePaths, string modelsFilePath, string modelsNamespace)
         {
             var hackFilePath = string.Empty;
             try
             {
-                hackFilePath = CreateHackFile(targetPath, targetNamespace);
+                hackFilePath = CreateHackFile(modelsFilePath);
                 inputXsdFilePaths.Add(hackFilePath);
-                processLauncher.RunXsd(xsdExePath, inputXsdFilePaths, targetNamespace);
+                processLauncher.RunXsd(xsdExePath, inputXsdFilePaths, Path.GetFullPath(modelsFilePath), modelsNamespace);
             }
             finally
             {
@@ -69,9 +69,11 @@ namespace XSDTools
             }
         }
 
-        private string CreateHackFile(string targetPath, string targetNamespace)
+        private string CreateHackFile(string modelsFilePath)
         {
-            var hackFilePath = Path.Combine(targetPath, targetNamespace + ".xsd");
+            var hackPath = Path.GetFullPath(modelsFilePath);
+            var hackFileName = Path.GetFileNameWithoutExtension(modelsFilePath);
+            var hackFilePath = Path.Combine(hackPath, hackFileName + ".xsd");
             const string hackFileContent = @"<?xml version=""1.0"" encoding=""utf-8""?>
 <xs:schema xmlns:xs=""http://www.w3.org/2001/XMLSchema""/>";
             File.WriteAllText(hackFilePath, hackFileContent);

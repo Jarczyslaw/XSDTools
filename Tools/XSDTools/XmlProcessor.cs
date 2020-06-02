@@ -45,7 +45,12 @@ namespace XSDTools
         {
             var document = new XmlDocument();
             document.Load(filePath);
-            return ReplaceExternalDependencies(document);
+            var replaced = ReplaceExternalDependencies(document);
+            if (replaced.Count > 0)
+            {
+                document.Save(filePath);
+            }
+            return replaced;
         }
 
         public List<ReplacedDependencies> ReplaceExternalDependencies(XmlDocument document)
