@@ -14,14 +14,31 @@
         <Style TargetType="GroupBox">
             <Setter Property="Margin" Value="3" />
         </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="Margin" Value="3" />
+        </Style>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <GroupBox Grid.Row="0" Header="Tools">
+        <GroupBox Grid.Row="0" Header="XSD.exe path">
+            <StackPanel Orientation="Horizontal">
+                <TextBox
+                    Width="462"
+                    VerticalContentAlignment="Center"
+                    IsReadOnly="True"
+                    Text="{Binding XsdExePath}" />
+                <Button
+                    Width="30"
+                    Command="{Binding SetXsdExePathCommand}"
+                    Content="..." />
+            </StackPanel>
+        </GroupBox>
+        <GroupBox Grid.Row="1" Header="Tools">
             <StackPanel Orientation="Vertical">
                 <Button Command="{Binding RemoveExternalDependenciesCommand}" Content="Remove external dependencies" />
                 <Button Command="{Binding GenerateModelsCommand}" Content="Generate models" />
@@ -29,7 +46,7 @@
                 <Button Command="{Binding ValidateXmlCommand}" Content="Validate XML" />
             </StackPanel>
         </GroupBox>
-        <GroupBox Grid.Row="1" Header="Logs">
+        <GroupBox Grid.Row="2" Header="Logs">
             <TextBox
                 Width="500"
                 Height="400"

@@ -3,6 +3,7 @@ using Prism.Ioc;
 using Prism.Modularity;
 using System.Windows;
 using JToolbox.Desktop.Dialogs;
+using XSDTools.DesktopApp.Services;
 
 namespace XSDTools.DesktopApp
 {
@@ -16,6 +17,7 @@ namespace XSDTools.DesktopApp
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
             containerRegistry.Register<IDialogsService, DialogsService>();
+            containerRegistry.Register<IAppSettings, AppSettings>();
         }
     }
 }
