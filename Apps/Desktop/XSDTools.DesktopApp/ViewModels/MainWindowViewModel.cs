@@ -28,14 +28,13 @@ namespace XSDTools.DesktopApp.ViewModels
 
         public DelegateCommand GenerateModelsCommand => new DelegateCommand(() =>
         {
-            if (!File.Exists(xsdExePath))
+            if (!XsdExePathSet && !FindXsdExe())
             {
-                FindXsdExe();
+                return;
             }
 
             if (XsdExePathSet)
             {
-
             }
         });
 
