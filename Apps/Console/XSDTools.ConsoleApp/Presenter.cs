@@ -58,7 +58,7 @@ namespace XSDTools.ConsoleApp
                 view.GetInput("Press ENTER to start generating models");
                 var modelsFilePath = Path.Combine(config.TargetXsdFilesPath, config.TargetFileName);
                 view.ShowMessage("Running xsd.exe...");
-                xsdProcessor.CreateModels(processedFiles, modelsFilePath, config.TargetNamespace);
+                xsdProcessor.CreateModels(config.XsdExecutablePath, processedFiles, modelsFilePath, config.TargetNamespace);
                 view.ShowMessage("Finished!");
             }
             catch (Exception exc)

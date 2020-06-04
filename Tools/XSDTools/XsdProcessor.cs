@@ -10,12 +10,6 @@ namespace XSDTools
         private readonly XmlProcessor xmlProcessor = new XmlProcessor();
         private readonly ProcessLauncher processLauncher = new ProcessLauncher();
         private readonly FileDownloader fileDownloader = new FileDownloader();
-        private readonly string xsdExePath;
-
-        public XsdProcessor(string xsdExePath)
-        {
-            this.xsdExePath = xsdExePath;
-        }
 
         public List<string> RemoveExternalDependenciesFromFile(string filePath)
         {
@@ -57,7 +51,7 @@ namespace XSDTools
             }
         }
 
-        public void CreateModels(List<string> inputFilePaths, string modelsFilePath, string modelsNamespace)
+        public void CreateModels(string xsdExePath, List<string> inputFilePaths, string modelsFilePath, string modelsNamespace)
         {
             var hackFilePath = string.Empty;
             try

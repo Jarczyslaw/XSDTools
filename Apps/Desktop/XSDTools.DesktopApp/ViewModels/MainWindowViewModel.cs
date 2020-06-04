@@ -1,6 +1,7 @@
 ﻿using JToolbox.Desktop.Dialogs;
 using Prism.Commands;
 using Prism.Mvvm;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using XSDTools.DesktopApp.Services;
@@ -14,16 +15,46 @@ namespace XSDTools.DesktopApp.ViewModels
         private readonly IDialogsService dialogsService;
         private readonly IAppSettings appSettings;
 
+        private List<DialogFilterPair> xsdFilter = new List<DialogFilterPair> { new DialogFilterPair("xsd") };
+
         public MainWindowViewModel(IDialogsService dialogsService, IAppSettings appSettings)
         {
             this.dialogsService = dialogsService;
             this.appSettings = appSettings;
 
             XsdExePath = appSettings.XsdExePath;
+
+            var xsd = new XsdProcessor();
         }
 
         public DelegateCommand RemoveExternalDependenciesCommand => new DelegateCommand(() =>
         {
+            var sourceFile = dialogsService.OpenFile("Select XSD file...", null, xsdFilter);
+            if (string.IsNullOrEmpty(sourceFile))
+            {
+                return;
+            }
+
+            var targetFolder = dialogsService.OpenFolder("Select target folder...");
+            if (string.IsNullOrEmpty(targetFolder))
+            {
+                return;
+            }
+
+            try
+            {
+                var targetFile = Path.Combine(targetFolder, Path.GetFileName(sourceFile));
+                File.Copy(sourceFile, targetFile, true);
+
+                using (var xsdProcessor = new XsdProcessor())
+                {
+                    var processedFiles = xsdProcessor.RemoveExternalDependenciesFromFile(targetFile);
+                }
+            }
+            catch (Exception exc)
+            {
+                dialogsService.ShowException(exc);
+            }
         });
 
         public DelegateCommand GenerateModelsCommand => new DelegateCommand(() =>
@@ -31,10 +62,6 @@ namespace XSDTools.DesktopApp.ViewModels
             if (!XsdExePathSet && !FindXsdExe())
             {
                 return;
-            }
-
-            if (XsdExePathSet)
-            {
             }
         });
 
@@ -72,6 +99,15 @@ namespace XSDTools.DesktopApp.ViewModels
                 return true;
             }
             return false;
+        }
+
+        private void ClearLogs()
+        {
+            Logs = string.Empty;
+        }
+
+        private void AddLog(string message)
+        {
         }
     }
 }

@@ -6,6 +6,7 @@
         {
             var consoleView = new ConsoleView();
             var config = new AppConfig();
+            var xsdProcessor = new XsdProcessor();
 
             var validationResult = config.Validate();
             if (!string.IsNullOrEmpty(config.Validate()))
@@ -14,7 +15,6 @@
                 return;
             }
 
-            var xsdProcessor = new XsdProcessor(config.XsdExecutablePath);
             var presenter = new Presenter(consoleView, config, xsdProcessor);
             presenter.Run();
         }
