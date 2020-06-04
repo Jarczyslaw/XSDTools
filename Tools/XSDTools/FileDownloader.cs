@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace XSDTools
 {
@@ -14,27 +15,17 @@ namespace XSDTools
             client = new WebClient();
         }
 
-        public string Download(string filePath, string targetPath)
+        public async Task<string> Download(string filePath, string targetPath)
         {
             var fileName = Path.GetFileName(filePath);
             var downloadFilePath = Path.Combine(targetPath, fileName);
-            client.DownloadFile(filePath, downloadFilePath);
+            await client.DownloadFileTaskAsync(filePath, downloadFilePath);
             return downloadFilePath;
         }
 
-        public void DownloadAs(string filePath, string targetFilePath)
+        public Task DownloadAs(string filePath, string targetFilePath)
         {
-            client.DownloadFile(filePath, targetFilePath);
-        }
-
-        public List<string> Download(List<string> filePaths, string targetPath)
-        {
-            var files = new List<string>();
-            foreach (var filePath in filePaths)
-            {
-                files.Add(Download(filePath, targetPath));
-            }
-            return files;
+            return client.DownloadFileTaskAsync(filePath, targetFilePath);
         }
 
         public void Dispose()

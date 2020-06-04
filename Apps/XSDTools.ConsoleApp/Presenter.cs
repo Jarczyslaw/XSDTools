@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace XSDTools.ConsoleApp
 {
@@ -17,7 +18,7 @@ namespace XSDTools.ConsoleApp
             this.xsdProcessor = xsdProcessor;
         }
 
-        public void Run()
+        public async Task Run()
         {
             view.ShowMessage($"XSD.exe path: {config.XsdExecutablePath}");
             view.ShowMessage($"XSD source files path: {config.SourceXsdFilesPath}");
@@ -48,7 +49,7 @@ namespace XSDTools.ConsoleApp
                     filesToProcess.Add(targetFile);
                 }
 
-                var processedFiles = xsdProcessor.RemoveExternalDependenciesFromFiles(config.TargetXsdFilesPath, filesToProcess);
+                var processedFiles = await xsdProcessor.RemoveExternalDependenciesFromFiles(config.TargetXsdFilesPath, filesToProcess);
                 view.ShowMessage($"Total processed files: {processedFiles.Count}");
                 foreach (var xsdFile in processedFiles)
                 {

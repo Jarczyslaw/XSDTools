@@ -1,8 +1,10 @@
-﻿namespace XSDTools.ConsoleApp
+﻿using System.Threading.Tasks;
+
+namespace XSDTools.ConsoleApp
 {
     internal static class Program
     {
-        private static void Main(string[] args)
+        private static async Task Main(string[] args)
         {
             var consoleView = new ConsoleView();
             var config = new AppConfig();
@@ -16,7 +18,7 @@
             }
 
             var presenter = new Presenter(consoleView, config, xsdProcessor);
-            presenter.Run();
+            await presenter.Run();
         }
     }
 }

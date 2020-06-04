@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace XSDTools
 {
@@ -11,25 +12,31 @@ namespace XSDTools
         private readonly ProcessLauncher processLauncher = new ProcessLauncher();
         private readonly FileDownloader fileDownloader = new FileDownloader();
 
-        public List<string> RemoveExternalDependenciesFromFile(string filePath)
+        public Task<List<string>> RemoveExternalDependenciesFromFile(string filePath)
         {
-            return RemoveExternalDependenciesFromFiles(Path.GetDirectoryName(filePath), new List<string> { Path.GetFileName(filePath) });
+            var inputPath = Path.GetDirectoryName(filePath);
+            var fileNames = new List<string>
+            {
+                Path.GetFileName(filePath)
+            };
+            return RemoveExternalDependenciesFromFiles(inputPath, fileNames);
         }
 
-        public List<string> RemoveExternalDependenciesFromFiles(string folderPath)
+        public Task<List<string>> RemoveExternalDependenciesFromFiles(string folderPath)
         {
-            return RemoveExternalDependenciesFromFiles(folderPath, GetXsdFileNames(folderPath));
+            var fileNames = GetXsdFileNames(folderPath);
+            return RemoveExternalDependenciesFromFiles(folderPath, fileNames);
         }
 
-        public List<string> RemoveExternalDependenciesFromFiles(string folderPath, List<string> inputFileNames)
+        public async Task<List<string>> RemoveExternalDependenciesFromFiles(string folderPath, List<string> inputFileNames)
         {
             var files = new List<string>();
             var downloadedFiles = new List<string>();
-            RemoveExternalDependencies(folderPath, inputFileNames, downloadedFiles, files);
+            await RemoveExternalDependencies(folderPath, inputFileNames, downloadedFiles, files);
             return files;
         }
 
-        private void RemoveExternalDependencies(string inputPath, List<string> inputFileNames, List<string> downloadedFiles, List<string> outputFilePaths)
+        private async Task RemoveExternalDependencies(string inputPath, List<string> inputFileNames, List<string> downloadedFiles, List<string> outputFilePaths)
         {
             foreach (var inputFile in inputFileNames)
             {
@@ -42,12 +49,12 @@ namespace XSDTools
                     var targetFilePath = Path.Combine(inputPath, dependency.ReplacedWith);
                     if (!downloadedFiles.Contains(targetFilePath))
                     {
-                        fileDownloader.DownloadAs(dependency.OriginalPath, targetFilePath);
+                        await fileDownloader.DownloadAs(dependency.OriginalPath, targetFilePath);
                         downloadedFiles.Add(targetFilePath);
                     }
                     newDependencies.Add(targetFilePath);
                 }
-                RemoveExternalDependencies(inputPath, newDependencies, downloadedFiles, outputFilePaths);
+                await RemoveExternalDependencies(inputPath, newDependencies, downloadedFiles, outputFilePaths);
             }
         }
 
