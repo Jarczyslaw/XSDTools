@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{380ECEDE-818F-4AB3-97DC-8FF324BB6C82}</ProjectGuid>
+    <ProjectGuid>{F8AAA611-A074-4D85-ACE1-1EC71BEC901A}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>XSDTools.DesktopApp</RootNamespace>
-    <AssemblyName>XSDTools</AssemblyName>
+    <AssemblyName>XSDTools.DesktopApp</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -100,11 +100,15 @@
     <PackageReference Include="Prism.Unity" Version="7.2.0.1422" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\JToolbox\Desktop\JToolbox.Desktop.Dialogs\JToolbox.Desktop.Dialogs.csproj">
+    <ProjectReference Include="..\..\JToolbox\Desktop\JToolbox.Desktop.Dialogs\JToolbox.Desktop.Dialogs.csproj">
       <Project>{7519097d-59ff-4717-a043-c083a7aa9a5d}</Project>
       <Name>JToolbox.Desktop.Dialogs</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Tools\XSDTools\XSDTools.csproj">
+    <ProjectReference Include="..\..\Tools\XmlSampleGenerator\XmlSampleGenerator.csproj">
+      <Project>{44f03b5d-002e-442f-b0e7-04ad827e7370}</Project>
+      <Name>XmlSampleGenerator</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Tools\XSDTools\XSDTools.csproj">
       <Project>{0827d56f-c220-48ad-a5d2-9fd6aa17a2a4}</Project>
       <Name>XSDTools</Name>
     </ProjectReference>

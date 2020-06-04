@@ -1,12 +1,14 @@
-﻿using XSDTools.DesktopApp.Views;
+﻿using JToolbox.Desktop.Dialogs;
 using Prism.Ioc;
-using Prism.Modularity;
 using System.Windows;
-using JToolbox.Desktop.Dialogs;
 using XSDTools.DesktopApp.Services;
+using XSDTools.DesktopApp.Views;
 
 namespace XSDTools.DesktopApp
 {
+    /// <summary>
+    /// Interaction logic for App.xaml
+    /// </summary>
     public partial class App
     {
         protected override Window CreateShell()
