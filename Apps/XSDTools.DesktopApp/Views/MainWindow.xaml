@@ -3,9 +3,13 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:prism="http://prismlibrary.com/"
+    xmlns:xt="http://schemas.xceed.com/wpf/xaml/toolkit"
     Title="XSDTools"
-    prism:ViewModelLocator.AutoWireViewModel="True"
-    SizeToContent="WidthAndHeight">
+    Width="600"
+    Height="500"
+    MinWidth="600"
+    MinHeight="500"
+    prism:ViewModelLocator.AutoWireViewModel="True">
     <Window.Resources>
         <Style TargetType="Button">
             <Setter Property="Margin" Value="3" />
@@ -18,42 +22,48 @@
             <Setter Property="Margin" Value="3" />
         </Style>
     </Window.Resources>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
+    <xt:BusyIndicator BusyContent="Processing..." IsBusy="{Binding IsBusy}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
 
-        <GroupBox Grid.Row="0" Header="XSD.exe path">
-            <StackPanel Orientation="Horizontal">
+            <GroupBox Grid.Row="0" Header="XSD.exe path">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox
+                        VerticalContentAlignment="Center"
+                        IsReadOnly="True"
+                        Text="{Binding XsdExePath}" />
+                    <Button
+                        Grid.Column="1"
+                        Width="30"
+                        Command="{Binding SetXsdExePathCommand}"
+                        Content="..." />
+                </Grid>
+            </GroupBox>
+            <GroupBox Grid.Row="1" Header="Tools">
+                <StackPanel Orientation="Vertical">
+                    <Button Command="{Binding RemoveExternalDependenciesCommand}" Content="Remove external dependencies" />
+                    <Button Command="{Binding GenerateModelsCommand}" Content="Generate models" />
+                    <Button Command="{Binding GenerateSampleXmlCommand}" Content="Generate sample XML" />
+                    <Button Command="{Binding ValidateXmlCommand}" Content="Validate XML" />
+                </StackPanel>
+            </GroupBox>
+            <GroupBox Grid.Row="2" Header="Logs">
                 <TextBox
-                    Width="462"
-                    VerticalContentAlignment="Center"
+                    AcceptsReturn="True"
                     IsReadOnly="True"
-                    Text="{Binding XsdExePath}" />
-                <Button
-                    Width="30"
-                    Command="{Binding SetXsdExePathCommand}"
-                    Content="..." />
-            </StackPanel>
-        </GroupBox>
-        <GroupBox Grid.Row="1" Header="Tools">
-            <StackPanel Orientation="Vertical">
-                <Button Command="{Binding RemoveExternalDependenciesCommand}" Content="Remove external dependencies" />
-                <Button Command="{Binding GenerateModelsCommand}" Content="Generate models" />
-                <Button Command="{Binding GenerateSampleXmlCommand}" Content="Generate sample XML" />
-                <Button Command="{Binding ValidateXmlCommand}" Content="Validate XML" />
-            </StackPanel>
-        </GroupBox>
-        <GroupBox Grid.Row="2" Header="Logs">
-            <TextBox
-                Width="500"
-                Height="400"
-                AcceptsReturn="True"
-                IsReadOnly="True"
-                Text="{Binding Logs}"
-                TextWrapping="Wrap" />
-        </GroupBox>
-    </Grid>
+                    Text="{Binding Logs}"
+                    TextWrapping="NoWrap"
+                    VerticalScrollBarVisibility="Visible" />
+            </GroupBox>
+        </Grid>
+    </xt:BusyIndicator>
 </Window>

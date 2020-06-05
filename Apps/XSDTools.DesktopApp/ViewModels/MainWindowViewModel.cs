@@ -10,13 +10,14 @@ namespace XSDTools.DesktopApp.ViewModels
 {
     public class MainWindowViewModel : BindableBase
     {
+        private bool isBusy = false;
         private string logs = string.Empty;
         private string xsdExePath = string.Empty;
         private readonly IDialogsService dialogsService;
         private readonly IAppSettings appSettings;
         private readonly XsdProcessor xsdProcessor = new XsdProcessor();
 
-        private List<DialogFilterPair> xsdFilter = new List<DialogFilterPair> { new DialogFilterPair("xsd") };
+        private readonly List<DialogFilterPair> xsdFilter = new List<DialogFilterPair> { new DialogFilterPair("xsd") };
 
         public MainWindowViewModel(IDialogsService dialogsService, IAppSettings appSettings)
         {
@@ -24,11 +25,9 @@ namespace XSDTools.DesktopApp.ViewModels
             this.appSettings = appSettings;
 
             XsdExePath = appSettings.XsdExePath;
-
-            var xsd = new XsdProcessor();
         }
 
-        public DelegateCommand RemoveExternalDependenciesCommand => new DelegateCommand(() =>
+        public DelegateCommand RemoveExternalDependenciesCommand => new DelegateCommand(async () =>
         {
             var sourceFile = dialogsService.OpenFile("Select XSD file...", null, xsdFilter);
             if (string.IsNullOrEmpty(sourceFile))
@@ -44,14 +43,29 @@ namespace XSDTools.DesktopApp.ViewModels
 
             try
             {
-                var targetFile = Path.Combine(targetFolder, Path.GetFileName(sourceFile));
-                File.Copy(sourceFile, targetFile, true);
+                IsBusy = true;
 
-                var processedFiles = xsdProcessor.RemoveExternalDependenciesFromFile(targetFile);
+                var targetFile = Path.Combine(targetFolder, Path.GetFileName(sourceFile));
+                if (sourceFile != targetFile)
+                {
+                    File.Copy(sourceFile, targetFile, true);
+                }
+
+                ClearLogs();
+                var processedFiles = await xsdProcessor.RemoveExternalDependenciesFromFile(targetFile);
+                AddLog($"Processed files ({processedFiles.Count}):");
+                foreach (var processedFile in processedFiles)
+                {
+                    AddLog("\t" + processedFile);
+                }
             }
             catch (Exception exc)
             {
                 dialogsService.ShowException(exc);
+            }
+            finally
+            {
+                IsBusy = false;
             }
         });
 
@@ -72,6 +86,12 @@ namespace XSDTools.DesktopApp.ViewModels
         });
 
         public DelegateCommand SetXsdExePathCommand => new DelegateCommand(() => FindXsdExe());
+
+        public bool IsBusy
+        {
+            get => isBusy;
+            set => SetProperty(ref isBusy, value);
+        }
 
         public string Logs
         {
@@ -106,6 +126,7 @@ namespace XSDTools.DesktopApp.ViewModels
 
         private void AddLog(string message)
         {
+            Logs = Logs + message + Environment.NewLine;
         }
     }
 }

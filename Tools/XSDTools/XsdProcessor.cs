@@ -15,7 +15,7 @@ namespace XSDTools
         {
             var files = new List<string>
             {
-                Path.GetFileName(filePath)
+                filePath
             };
             return RemoveExternalDependenciesFromFiles(files);
         }
