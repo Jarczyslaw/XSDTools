@@ -14,6 +14,7 @@ namespace XSDTools.DesktopApp.ViewModels
         private string xsdExePath = string.Empty;
         private readonly IDialogsService dialogsService;
         private readonly IAppSettings appSettings;
+        private readonly XsdProcessor xsdProcessor = new XsdProcessor();
 
         private List<DialogFilterPair> xsdFilter = new List<DialogFilterPair> { new DialogFilterPair("xsd") };
 
@@ -46,10 +47,7 @@ namespace XSDTools.DesktopApp.ViewModels
                 var targetFile = Path.Combine(targetFolder, Path.GetFileName(sourceFile));
                 File.Copy(sourceFile, targetFile, true);
 
-                using (var xsdProcessor = new XsdProcessor())
-                {
-                    var processedFiles = xsdProcessor.RemoveExternalDependenciesFromFile(targetFile);
-                }
+                var processedFiles = xsdProcessor.RemoveExternalDependenciesFromFile(targetFile);
             }
             catch (Exception exc)
             {
