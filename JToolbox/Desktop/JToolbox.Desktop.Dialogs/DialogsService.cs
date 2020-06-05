@@ -8,6 +8,14 @@ namespace JToolbox.Desktop.Dialogs
 {
     public class DialogsService : IDialogsService
     {
+        public TaskDialogResult Show(TaskDialogBuilder builder)
+        {
+            using (var dialog = builder.Dialog)
+            {
+                return dialog.Show();
+            }
+        }
+
         public void ShowInfo(string message, string details = null, IntPtr? owner = null)
         {
             var builder = new TaskDialogBuilder()
@@ -15,10 +23,7 @@ namespace JToolbox.Desktop.Dialogs
                 .AddDetails(Resources.Resources.ShowDetails, Resources.Resources.HideDetails, details)
                 .SetOwner(GetOwnerHandle(owner));
 
-            using (var dialog = builder.Build())
-            {
-                dialog.Show();
-            }
+            Show(builder);
         }
 
         public void ShowWarning(string message, string details = null, IntPtr? owner = null)
@@ -28,10 +33,7 @@ namespace JToolbox.Desktop.Dialogs
                 .AddDetails(Resources.Resources.ShowDetails, Resources.Resources.HideDetails, details)
                 .SetOwner(GetOwnerHandle(owner));
 
-            using (var dialog = builder.Build())
-            {
-                dialog.Show();
-            }
+            Show(builder);
         }
 
         public void ShowError(string error, string details = null, IntPtr? owner = null)
@@ -41,10 +43,7 @@ namespace JToolbox.Desktop.Dialogs
                 .AddDetails(Resources.Resources.ShowDetails, Resources.Resources.HideDetails, details)
                 .SetOwner(GetOwnerHandle(owner));
 
-            using (var dialog = builder.Build())
-            {
-                dialog.Show();
-            }
+            Show(builder);
         }
 
         public void ShowException(Exception exception, string message = null, IntPtr? owner = null)
@@ -57,6 +56,21 @@ namespace JToolbox.Desktop.Dialogs
             ShowExceptionDialog(Resources.Resources.CriticalException, exception, message, owner);
         }
 
+        private void ShowExceptionDialog(string caption, Exception exception, string message, IntPtr? owner)
+        {
+            var text = exception.Message;
+            if (!string.IsNullOrEmpty(message))
+            {
+                text = message + Environment.NewLine + text;
+            }
+            var builder = new TaskDialogBuilder()
+                .Initialize(caption, text, TaskDialogStandardIcon.Error, Resources.Resources.ExceptionOccured)
+                .AddDetails(Resources.Resources.ShowDetails, Resources.Resources.HideDetails, exception.StackTrace)
+                .SetOwner(GetOwnerHandle(owner));
+
+            Show(builder);
+        }
+
         public bool ShowYesNoQuestion(string question, IntPtr? owner = null)
         {
             var builder = new TaskDialogBuilder()
@@ -64,13 +78,7 @@ namespace JToolbox.Desktop.Dialogs
                 .SetButtons(TaskDialogStandardButtons.Yes, TaskDialogStandardButtons.No)
                 .SetOwner(GetOwnerHandle(owner));
 
-            var result = false;
-            using (var dialog = builder.Build())
-            {
-                result = dialog.Show() == TaskDialogResult.Yes;
-            }
-
-            return result;
+            return Show(builder) == TaskDialogResult.Yes;
         }
 
         public T ShowCustomButtonsQuestion<T>(string question, IEnumerable<CustomButtonData<T>> customButtons, IntPtr? owner = null)
@@ -80,7 +88,7 @@ namespace JToolbox.Desktop.Dialogs
                 .SetOwner(GetOwnerHandle(owner));
 
             var result = default(T);
-            using (var dialog = builder.Build())
+            using (var dialog = builder.Dialog)
             {
                 foreach (var customButton in customButtons)
                 {
@@ -104,39 +112,13 @@ namespace JToolbox.Desktop.Dialogs
                 .AddProgressbar(0, 100, TaskDialogProgressBarState.Marquee)
                 .SetOwner(GetOwnerHandle(owner));
 
-            using (var dialog = builder.Build())
-            {
-                dialog.Show();
-            }
+            Show(builder);
         }
 
-        public string OpenFile(string title, string initialDirectory = null, List<DialogFilterPair> filters = null)
+        public List<string> Open(CommonOpenDialogBuilder builder)
         {
-            var builder = new CommonOpenDialogBuilder()
-                .Initialize(title, initialDirectory)
-                .SetAsFileDialog(false)
-                .AddFilters(filters);
-
-            string result = null;
-            using (var dialog = builder.Build())
-            {
-                if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
-                {
-                    result = dialog.FileName;
-                }
-            }
-            return result;
-        }
-
-        public List<string> OpenFiles(string title, string initialDirectory = null, List<DialogFilterPair> filters = null)
-        {
-            var builder = new CommonOpenDialogBuilder()
-                .Initialize(title, initialDirectory)
-                .SetAsFileDialog(true)
-                .AddFilters(filters);
-
             List<string> result = null;
-            using (var dialog = builder.Build())
+            using (var dialog = builder.Dialog)
             {
                 if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
                 {
@@ -146,14 +128,49 @@ namespace JToolbox.Desktop.Dialogs
             return result;
         }
 
+        private string OpenSingle(CommonOpenDialogBuilder builder)
+        {
+            var files = Open(builder);
+            if (files?.Count == 1)
+            {
+                return files[0];
+            }
+            return null;
+        }
+
+        public string OpenFile(string title, string initialDirectory = null, List<DialogFilterPair> filters = null)
+        {
+            var builder = new CommonOpenDialogBuilder()
+                .Initialize(title, initialDirectory)
+                .SetAsFileDialog(false)
+                .AddFilters(filters);
+
+            return OpenSingle(builder);
+        }
+
+        public List<string> OpenFiles(string title, string initialDirectory = null, List<DialogFilterPair> filters = null)
+        {
+            var builder = new CommonOpenDialogBuilder()
+                .Initialize(title, initialDirectory)
+                .SetAsFileDialog(true)
+                .AddFilters(filters);
+
+            return Open(builder);
+        }
+
         public string OpenFolder(string title, string initialDirectory = null)
         {
             var builder = new CommonOpenDialogBuilder()
                 .Initialize(title, initialDirectory)
                 .SetAsFolderDialog();
 
+            return OpenSingle(builder);
+        }
+
+        public string Save(CommonSaveDialogBuilder builder)
+        {
             string result = null;
-            using (var dialog = builder.Build())
+            using (var dialog = builder.Dialog)
             {
                 if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
                 {
@@ -170,33 +187,7 @@ namespace JToolbox.Desktop.Dialogs
                 .SetDefaults(defaultFileName, filter.ExtensionsList)
                 .AddFilter(filter);
 
-            string result = null;
-            using (var dialog = builder.Build())
-            {
-                if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
-                {
-                    result = dialog.FileName;
-                }
-            }
-            return result;
-        }
-
-        private void ShowExceptionDialog(string caption, Exception exception, string message, IntPtr? owner)
-        {
-            var text = exception.Message;
-            if (!string.IsNullOrEmpty(message))
-            {
-                text = message + Environment.NewLine + text;
-            }
-            var builder = new TaskDialogBuilder()
-                .Initialize(caption, text, TaskDialogStandardIcon.Error, Resources.Resources.ExceptionOccured)
-                .AddDetails(Resources.Resources.ShowDetails, Resources.Resources.HideDetails, exception.StackTrace)
-                .SetOwner(GetOwnerHandle(owner));
-
-            using (var dialog = builder.Build())
-            {
-                dialog.Show();
-            }
+            return Save(builder);
         }
 
         private IntPtr GetOwnerHandle(IntPtr? owner)

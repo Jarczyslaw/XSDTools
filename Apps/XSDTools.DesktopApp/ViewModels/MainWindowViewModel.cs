@@ -75,6 +75,11 @@ namespace XSDTools.DesktopApp.ViewModels
             {
                 return;
             }
+
+            var files = dialogsService.OpenFiles("Open xsd files...", null, xsdFilter);
+            if (files?.Count > 0)
+            {
+            }
         });
 
         public DelegateCommand GenerateSampleXmlCommand => new DelegateCommand(() =>
@@ -110,13 +115,20 @@ namespace XSDTools.DesktopApp.ViewModels
         private bool FindXsdExe()
         {
             var file = dialogsService.OpenFile("Find xsd.exe file...", null, new List<DialogFilterPair> { new DialogFilterPair("exe") });
-            if (!string.IsNullOrEmpty(file))
+            if (string.IsNullOrEmpty(file))
             {
-                XsdExePath = file;
-                appSettings.XsdExePath = file;
-                return true;
+                return false;
             }
-            return false;
+
+            if (Path.GetFileName(file) != "xsd.exe")
+            {
+                dialogsService.ShowError("Invalid file selected");
+                return false;
+            }
+
+            XsdExePath = file;
+            appSettings.XsdExePath = file;
+            return true;
         }
 
         private void ClearLogs()
