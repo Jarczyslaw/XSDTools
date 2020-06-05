@@ -1,60 +1,61 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace XSDTools
 {
-    public class XsdProcessor : IDisposable
+    public class XsdProcessor
     {
         private readonly XmlProcessor xmlProcessor = new XmlProcessor();
         private readonly ProcessLauncher processLauncher = new ProcessLauncher();
-        private readonly FileDownloader fileDownloader = new FileDownloader();
 
         public Task<List<string>> RemoveExternalDependenciesFromFile(string filePath)
         {
-            var inputPath = Path.GetDirectoryName(filePath);
-            var fileNames = new List<string>
+            var files = new List<string>
             {
                 Path.GetFileName(filePath)
             };
-            return RemoveExternalDependenciesFromFiles(inputPath, fileNames);
+            return RemoveExternalDependenciesFromFiles(files);
         }
 
         public Task<List<string>> RemoveExternalDependenciesFromFiles(string folderPath)
         {
-            var fileNames = GetXsdFileNames(folderPath);
-            return RemoveExternalDependenciesFromFiles(folderPath, fileNames);
+            var files = GetXsdFiles(folderPath);
+            return RemoveExternalDependenciesFromFiles(files);
         }
 
-        public async Task<List<string>> RemoveExternalDependenciesFromFiles(string folderPath, List<string> inputFileNames)
+        public async Task<List<string>> RemoveExternalDependenciesFromFiles(List<string> inputFilePaths)
         {
             var files = new List<string>();
-            var downloadedFiles = new List<string>();
-            await RemoveExternalDependencies(folderPath, inputFileNames, downloadedFiles, files);
+            await RemoveExternalDependencies(inputFilePaths, files);
             return files;
         }
 
-        private async Task RemoveExternalDependencies(string inputPath, List<string> inputFileNames, List<string> downloadedFiles, List<string> outputFilePaths)
+        private async Task RemoveExternalDependencies(List<string> inputFilePaths, List<string> outputFilePaths)
         {
-            foreach (var inputFile in inputFileNames)
+            foreach (var inputFilePath in inputFilePaths)
             {
-                var inputFilePath = Path.Combine(inputPath, inputFile);
-                outputFilePaths.Add(inputFilePath);
-                var dependencies = xmlProcessor.ReplaceExternalDependencies(inputFilePath);
-                var newDependencies = new List<string>();
-                foreach (var dependency in dependencies)
+                if (!outputFilePaths.Contains(inputFilePath))
                 {
-                    var targetFilePath = Path.Combine(inputPath, dependency.ReplacedWith);
-                    if (!downloadedFiles.Contains(targetFilePath))
+                    outputFilePaths.Add(inputFilePath);
+                    var dependencies = xmlProcessor.ReplaceExternalDependencies(inputFilePath);
+                    var newDependencies = new List<string>();
+                    foreach (var dependency in dependencies)
                     {
-                        await fileDownloader.DownloadAs(dependency.OriginalPath, targetFilePath);
-                        downloadedFiles.Add(targetFilePath);
+                        var targetFilePath = Path.Combine(Path.GetDirectoryName(inputFilePath), dependency.ReplacedWith);
+                        if (!outputFilePaths.Contains(targetFilePath))
+                        {
+                            using (var client = new WebClient())
+                            {
+                                await client.DownloadFileTaskAsync(dependency.OriginalPath, targetFilePath);
+                            }
+                        }
+                        newDependencies.Add(targetFilePath);
                     }
-                    newDependencies.Add(targetFilePath);
+                    await RemoveExternalDependencies(newDependencies, outputFilePaths);
                 }
-                await RemoveExternalDependencies(inputPath, newDependencies, downloadedFiles, outputFilePaths);
             }
         }
 
@@ -98,11 +99,6 @@ namespace XSDTools
             return GetXsdFiles(folderPath)
                 .Select(Path.GetFileName)
                 .ToList();
-        }
-
-        public void Dispose()
-        {
-            fileDownloader.Dispose();
         }
     }
 }

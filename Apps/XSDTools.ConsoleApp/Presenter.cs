@@ -49,7 +49,7 @@ namespace XSDTools.ConsoleApp
                     filesToProcess.Add(targetFile);
                 }
 
-                var processedFiles = await xsdProcessor.RemoveExternalDependenciesFromFiles(config.TargetXsdFilesPath, filesToProcess);
+                var processedFiles = await xsdProcessor.RemoveExternalDependenciesFromFiles(filesToProcess);
                 view.ShowMessage($"Total processed files: {processedFiles.Count}");
                 foreach (var xsdFile in processedFiles)
                 {
