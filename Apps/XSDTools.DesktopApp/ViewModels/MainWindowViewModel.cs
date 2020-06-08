@@ -1,4 +1,5 @@
-﻿using JToolbox.Desktop.Dialogs;
+﻿using JToolbox.Desktop.Core.Services;
+using JToolbox.Desktop.Dialogs;
 using Prism.Commands;
 using Prism.Mvvm;
 using System;
@@ -10,19 +11,24 @@ namespace XSDTools.DesktopApp.ViewModels
 {
     public class MainWindowViewModel : BindableBase
     {
-        private bool isBusy = false;
+        private bool isBusy;
         private string logs = string.Empty;
         private string xsdExePath = string.Empty;
         private readonly IDialogsService dialogsService;
         private readonly IAppSettings appSettings;
+        private readonly IWindowsService windowsService;
+        private readonly ISystemService systemService;
         private readonly XsdProcessor xsdProcessor = new XsdProcessor();
 
         private readonly List<DialogFilterPair> xsdFilter = new List<DialogFilterPair> { new DialogFilterPair("xsd") };
 
-        public MainWindowViewModel(IDialogsService dialogsService, IAppSettings appSettings)
+        public MainWindowViewModel(IDialogsService dialogsService, IAppSettings appSettings,
+            IWindowsService windowsService, ISystemService systemService)
         {
             this.dialogsService = dialogsService;
             this.appSettings = appSettings;
+            this.windowsService = windowsService;
+            this.systemService = systemService;
 
             XsdExePath = appSettings.XsdExePath;
         }
@@ -44,6 +50,7 @@ namespace XSDTools.DesktopApp.ViewModels
             try
             {
                 IsBusy = true;
+                StartLog($"Removing external dependencies from {sourceFile}");
 
                 var targetFile = Path.Combine(targetFolder, Path.GetFileName(sourceFile));
                 if (sourceFile != targetFile)
@@ -51,13 +58,14 @@ namespace XSDTools.DesktopApp.ViewModels
                     File.Copy(sourceFile, targetFile, true);
                 }
 
-                ClearLogs();
                 var processedFiles = await xsdProcessor.RemoveExternalDependenciesFromFile(targetFile);
+
                 AddLog($"Processed files ({processedFiles.Count}):");
                 foreach (var processedFile in processedFiles)
                 {
                     AddLog("\t" + processedFile);
                 }
+                AddLog("Done!");
             }
             catch (Exception exc)
             {
@@ -77,8 +85,56 @@ namespace XSDTools.DesktopApp.ViewModels
             }
 
             var files = dialogsService.OpenFiles("Open xsd files...", null, xsdFilter);
-            if (files?.Count > 0)
+            if (files == null || files.Count == 0)
             {
+                return;
+            }
+
+            var modelsData = windowsService.GetModelsData();
+            if (modelsData == null)
+            {
+                return;
+            }
+
+            var targetFolder = dialogsService.OpenFolder("Select target folder...");
+            if (string.IsNullOrEmpty(targetFolder))
+            {
+                return;
+            }
+
+            var targetModelsFile = Path.Combine(targetFolder, modelsData.FileName);
+
+            StartLog("Creating models from xsd files");
+            AddLog("Selected files:");
+            foreach (var file in files)
+            {
+                AddLog("\t" + file);
+            }
+            AddLog("Target models file: " + targetModelsFile);
+            AddLog("Target namespace: " + modelsData.Namespace);
+
+            try
+            {
+                IsBusy = true;
+                var output = xsdProcessor.CreateModels(XsdExePath, files, targetModelsFile, modelsData.Namespace);
+                AddLog("Executed command: " + output.Command);
+                AddLog("xsd.exe output:");
+                AddLog(output.Output);
+
+                IsBusy = false;
+
+                if (output.Valid && dialogsService.ShowYesNoQuestion("Do you want to open models folder?"))
+                {
+                    systemService.OpenFileLocation(targetModelsFile + ".cs");
+                }
+            }
+            catch (Exception exc)
+            {
+                dialogsService.ShowException(exc);
+            }
+            finally
+            {
+                IsBusy = false;
             }
         });
 
@@ -139,6 +195,12 @@ namespace XSDTools.DesktopApp.ViewModels
         private void AddLog(string message)
         {
             Logs = Logs + message + Environment.NewLine;
+        }
+
+        private void StartLog(string message)
+        {
+            ClearLogs();
+            AddLog(message);
         }
     }
 }

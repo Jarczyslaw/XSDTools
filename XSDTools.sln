@@ -28,6 +28,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XSDTools.DesktopApp", "Apps
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XSDTools.ConsoleApp", "Apps\XSDTools.ConsoleApp\XSDTools.ConsoleApp.csproj", "{A66AF431-DBBF-4373-AFD3-8B6F94F55DE0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JToolbox.Desktop.Core", "JToolbox\Desktop\JToolbox.Desktop.Core\JToolbox.Desktop.Core.csproj", "{F91C51E8-EEE9-405D-8D53-1BD1A8B462A9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,6 +60,10 @@ Global
 		{A66AF431-DBBF-4373-AFD3-8B6F94F55DE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A66AF431-DBBF-4373-AFD3-8B6F94F55DE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A66AF431-DBBF-4373-AFD3-8B6F94F55DE0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F91C51E8-EEE9-405D-8D53-1BD1A8B462A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F91C51E8-EEE9-405D-8D53-1BD1A8B462A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F91C51E8-EEE9-405D-8D53-1BD1A8B462A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F91C51E8-EEE9-405D-8D53-1BD1A8B462A9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -70,6 +76,7 @@ Global
 		{0827D56F-C220-48AD-A5D2-9FD6AA17A2A4} = {0C3B7AE4-866A-4085-9819-34B36F852B32}
 		{F8AAA611-A074-4D85-ACE1-1EC71BEC901A} = {82F62358-D967-4081-9B1E-9DE7BC44B10C}
 		{A66AF431-DBBF-4373-AFD3-8B6F94F55DE0} = {82F62358-D967-4081-9B1E-9DE7BC44B10C}
+		{F91C51E8-EEE9-405D-8D53-1BD1A8B462A9} = {BA5304EF-4448-497F-B7EC-D095C5BC4412}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CF70E8FA-19B6-468E-AEEA-2C0388D16FFD}

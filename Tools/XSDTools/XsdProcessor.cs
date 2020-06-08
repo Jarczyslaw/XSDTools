@@ -59,14 +59,14 @@ namespace XSDTools
             }
         }
 
-        public void CreateModels(string xsdExePath, List<string> inputFilePaths, string modelsFilePath, string modelsNamespace)
+        public ProcessLauncher.ProcessLauncherOutput CreateModels(string xsdExePath, List<string> inputFilePaths, string modelsFilePath, string modelsNamespace)
         {
             var hackFilePath = string.Empty;
             try
             {
                 hackFilePath = CreateHackFile(modelsFilePath);
                 inputFilePaths.Add(hackFilePath);
-                processLauncher.RunXsd(xsdExePath, inputFilePaths, Path.GetDirectoryName(modelsFilePath), modelsNamespace);
+                return processLauncher.RunXsd(xsdExePath, inputFilePaths, Path.GetDirectoryName(modelsFilePath), modelsNamespace);
             }
             finally
             {

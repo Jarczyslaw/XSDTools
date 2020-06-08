@@ -18,5 +18,23 @@ namespace JToolbox.Core.Extensions
         {
             return val1.Equals(val2, StringComparison.OrdinalIgnoreCase);
         }
+
+        public static string ExtractBetween(this string @string, string from, string to)
+        {
+            var indexFrom = @string.IndexOf(from);
+            if (indexFrom < 0)
+            {
+                return string.Empty;
+            }
+            indexFrom += from.Length;
+
+            var indexTo = @string.LastIndexOf(to);
+            if (indexTo < 0)
+            {
+                return string.Empty;
+            }
+
+            return @string.Substring(indexFrom, indexTo - indexFrom);
+        }
     }
 }

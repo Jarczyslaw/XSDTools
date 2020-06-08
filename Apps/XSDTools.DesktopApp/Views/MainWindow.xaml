@@ -59,6 +59,7 @@
             <GroupBox Grid.Row="2" Header="Logs">
                 <TextBox
                     AcceptsReturn="True"
+                    HorizontalScrollBarVisibility="Visible"
                     IsReadOnly="True"
                     Text="{Binding Logs}"
                     TextWrapping="NoWrap"

@@ -1,4 +1,5 @@
-﻿using JToolbox.Desktop.Dialogs;
+﻿using JToolbox.Desktop.Core.Services;
+using JToolbox.Desktop.Dialogs;
 using Prism.Ioc;
 using System.Windows;
 using XSDTools.DesktopApp.Services;
@@ -20,6 +21,8 @@ namespace XSDTools.DesktopApp
         {
             containerRegistry.Register<IDialogsService, DialogsService>();
             containerRegistry.Register<IAppSettings, AppSettings>();
+            containerRegistry.Register<IWindowsService, WindowsService>();
+            containerRegistry.Register<ISystemService, SystemService>();
         }
     }
 }

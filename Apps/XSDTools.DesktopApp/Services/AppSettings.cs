@@ -1,4 +1,7 @@
-﻿namespace XSDTools.DesktopApp.Services
+﻿using System;
+using System.IO;
+
+namespace XSDTools.DesktopApp.Services
 {
     public class AppSettings : IAppSettings
     {
@@ -6,7 +9,14 @@
 
         public string XsdExePath
         {
-            get => settings.XsdExePath;
+            get
+            {
+                if (string.IsNullOrEmpty(settings.XsdExePath))
+                {
+                    return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "xsd.exe");
+                }
+                return settings.XsdExePath;
+            }
             set
             {
                 settings.XsdExePath = value;

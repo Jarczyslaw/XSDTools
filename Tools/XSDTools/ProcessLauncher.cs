@@ -1,16 +1,20 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text;
 
 namespace XSDTools
 {
     public class ProcessLauncher
     {
-        public string RunXsd(string xsdExecutablePath, List<string> xsdFiles, string targetPath, string targetNamespace)
+        public ProcessLauncherOutput RunXsd(string xsdExecutablePath, List<string> xsdFiles, string targetPath, string targetNamespace)
         {
             var arguments = CreateArguments(xsdFiles, targetPath, targetNamespace);
             var commandToExecute = $"{xsdExecutablePath} {arguments}";
-            StartProcess(xsdExecutablePath, arguments);
-            return commandToExecute;
+            return new ProcessLauncherOutput
+            {
+                Command = commandToExecute,
+                Output = StartProcess(xsdExecutablePath, arguments)
+            };
         }
 
         private string CreateArguments(List<string> xsdFiles, string targetPath, string targetNamespace)
@@ -28,14 +32,30 @@ namespace XSDTools
             return args.Trim();
         }
 
-        private void StartProcess(string exePath, string arguments = null, bool useShellExecute = false)
+        private string StartProcess(string exePath, string arguments = null)
         {
             var info = new ProcessStartInfo(exePath, arguments)
             {
-                UseShellExecute = useShellExecute
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                CreateNoWindow = true
             };
             var proc = Process.Start(info);
+            var sb = new StringBuilder();
+            while (!proc.StandardOutput.EndOfStream)
+            {
+                sb.AppendLine(proc.StandardOutput.ReadLine());
+            }
             proc.WaitForExit();
+            return sb.ToString();
+        }
+
+        public class ProcessLauncherOutput
+        {
+            public string Command { get; set; }
+            public string Output { get; set; }
+
+            public bool Valid => Output?.Contains("Writing file") == true;
         }
     }
 }
