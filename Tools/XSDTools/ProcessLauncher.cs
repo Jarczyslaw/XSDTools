@@ -4,7 +4,7 @@ using System.Text;
 
 namespace XSDTools
 {
-    public class ProcessLauncher
+    public partial class ProcessLauncher
     {
         public ProcessLauncherOutput RunXsd(string xsdExecutablePath, List<string> xsdFiles, string targetPath, string targetNamespace)
         {
@@ -48,14 +48,6 @@ namespace XSDTools
             }
             proc.WaitForExit();
             return sb.ToString();
-        }
-
-        public class ProcessLauncherOutput
-        {
-            public string Command { get; set; }
-            public string Output { get; set; }
-
-            public bool Valid => Output?.Contains("Writing file") == true;
         }
     }
 }

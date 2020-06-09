@@ -1,0 +1,1 @@
+﻿Source taken from: https://github.com/mganss/XmlSchemaClassGenerator
