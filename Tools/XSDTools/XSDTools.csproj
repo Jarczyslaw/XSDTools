@@ -41,10 +41,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LoadXsdData.cs" />
     <Compile Include="ProcessLauncher.cs" />
     <Compile Include="ProcessLauncherOutput.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReplacedDependencies.cs" />
+    <Compile Include="ValidationData.cs" />
     <Compile Include="XmlProcessor.cs" />
     <Compile Include="XsdProcessor.cs" />
   </ItemGroup>

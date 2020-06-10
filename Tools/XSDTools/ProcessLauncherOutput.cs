@@ -1,13 +1,10 @@
 ﻿namespace XSDTools
 {
-    public partial class ProcessLauncher
+    public class ProcessLauncherOutput
     {
-        public class ProcessLauncherOutput
-        {
-            public string Command { get; set; }
-            public string Output { get; set; }
+        public string Command { get; set; }
+        public string Output { get; set; }
 
-            public bool Valid => Output?.Contains("Writing file") == true;
-        }
+        public bool Valid => Output?.Contains("Writing file") == true;
     }
 }

@@ -3,10 +3,12 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using System.Xml.Linq;
+using System.Xml.Schema;
 
 namespace XSDTools
 {
-    public class XsdProcessor
+    public partial class XsdProcessor
     {
         private readonly XmlProcessor xmlProcessor = new XmlProcessor();
         private readonly ProcessLauncher processLauncher = new ProcessLauncher();
@@ -59,7 +61,7 @@ namespace XSDTools
             }
         }
 
-        public ProcessLauncher.ProcessLauncherOutput CreateModels(string xsdExePath, List<string> inputFilePaths, string modelsFilePath, string modelsNamespace)
+        public ProcessLauncherOutput CreateModels(string xsdExePath, List<string> inputFilePaths, string modelsFilePath, string modelsNamespace)
         {
             var hackFilePath = string.Empty;
             try
@@ -99,6 +101,29 @@ namespace XSDTools
             return GetXsdFiles(folderPath)
                 .Select(Path.GetFileName)
                 .ToList();
+        }
+
+        public LoadXsdData LoadXsd(string filePath)
+        {
+            var result = new LoadXsdData();
+            var schemaSet = new XmlSchemaSet();
+            schemaSet.ValidationEventHandler += (s, e) => result.Data.Add(e);
+            result.Schema = schemaSet.Add(null, filePath);
+            result.SchemaSet = schemaSet;
+            return result;
+        }
+
+        public ValidationData ValidateXml(string xsdPath, string xmlPath)
+        {
+            var result = new ValidationData();
+            var loadXsdData = LoadXsd(xsdPath);
+            if (loadXsdData.HasErrors)
+            {
+                return loadXsdData;
+            }
+            var document = XDocument.Load(xmlPath, LoadOptions.SetLineInfo);
+            document.Validate(loadXsdData.SchemaSet, (s, e) => result.Data.Add(e));
+            return result;
         }
     }
 }
