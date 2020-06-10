@@ -136,11 +136,11 @@ namespace Microsoft.Xml.XMLGen
 
         public static void CreateSampleFile(string xsdPath, string rootElement, string xmlPath)
         {
-            using (var textWriter = new XmlTextWriter(xsdPath, null))
+            using (var textWriter = new XmlTextWriter(xmlPath, null))
             {
                 textWriter.Formatting = Formatting.Indented;
                 XmlQualifiedName qname = new XmlQualifiedName(rootElement);
-                XmlSampleGenerator generator = new XmlSampleGenerator(xmlPath, qname);
+                XmlSampleGenerator generator = new XmlSampleGenerator(xsdPath, qname);
                 generator.WriteXml(textWriter);
             }
         }
