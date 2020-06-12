@@ -48,6 +48,9 @@
     <Compile Include="ReplacedDependencies.cs" />
     <Compile Include="ValidationData.cs" />
     <Compile Include="XmlProcessor.cs" />
+    <Compile Include="XsdElement.cs" />
+    <Compile Include="XsdMapData.cs" />
+    <Compile Include="XsdMapper.cs" />
     <Compile Include="XsdProcessor.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

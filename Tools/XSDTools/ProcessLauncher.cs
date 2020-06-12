@@ -4,7 +4,7 @@ using System.Text;
 
 namespace XSDTools
 {
-    public partial class ProcessLauncher
+    public class ProcessLauncher
     {
         public ProcessLauncherOutput RunXsd(string xsdExecutablePath, List<string> xsdFiles, string targetPath, string targetNamespace)
         {

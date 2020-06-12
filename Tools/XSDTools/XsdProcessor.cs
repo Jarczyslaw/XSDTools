@@ -8,10 +8,11 @@ using System.Xml.Schema;
 
 namespace XSDTools
 {
-    public partial class XsdProcessor
+    public class XsdProcessor
     {
         private readonly XmlProcessor xmlProcessor = new XmlProcessor();
         private readonly ProcessLauncher processLauncher = new ProcessLauncher();
+        private readonly XsdMapper xsdMapper = new XsdMapper();
 
         public Task<List<string>> RemoveExternalDependenciesFromFile(string filePath)
         {
@@ -135,6 +136,19 @@ namespace XSDTools
             }
             var document = XDocument.Load(xmlPath, LoadOptions.SetLineInfo);
             document.Validate(loadXsdData.SchemaSet, (s, e) => result.Data.Add(e));
+            return result;
+        }
+
+        public XsdMapData GetXsdMap(string filePath)
+        {
+            var result = new XsdMapData();
+            var loadData = LoadXsd(filePath);
+            result.Data = loadData.Data;
+            if (loadData.HasErrors)
+            {
+                return result;
+            }
+            result.XsdElements = xsdMapper.GetXsdElements(loadData.Schema);
             return result;
         }
     }
