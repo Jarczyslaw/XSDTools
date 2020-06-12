@@ -33,6 +33,24 @@ namespace XSDTools.DesktopApp.ViewModels
             XsdExePath = appSettings.XsdExePath;
         }
 
+        public DelegateCommand ShowXsdElementsCommand => new DelegateCommand(() =>
+        {
+            var sourceFile = dialogsService.OpenFile("Select XSD file...", null, xsdFilter);
+            if (string.IsNullOrEmpty(sourceFile))
+            {
+                return;
+            }
+
+            try
+            {
+
+            }
+            catch (Exception exc)
+            {
+                dialogsService.ShowException(exc);
+            }
+        });
+
         public DelegateCommand RemoveExternalDependenciesCommand => new DelegateCommand(async () =>
         {
             var sourceFile = dialogsService.OpenFile("Select XSD file...", null, xsdFilter);

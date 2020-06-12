@@ -50,6 +50,7 @@
             </GroupBox>
             <GroupBox Grid.Row="1" Header="Tools">
                 <StackPanel Orientation="Vertical">
+                    <Button Command="{Binding ShowXsdElementsCommand}" Content="Show XSD elements" />
                     <Button Command="{Binding RemoveExternalDependenciesCommand}" Content="Remove external dependencies" />
                     <Button Command="{Binding GenerateModelsCommand}" Content="Generate models" />
                     <Button Command="{Binding GenerateSampleXmlCommand}" Content="Generate sample XML" />

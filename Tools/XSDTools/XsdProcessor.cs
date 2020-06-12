@@ -103,13 +103,25 @@ namespace XSDTools
                 .ToList();
         }
 
-        public LoadXsdData LoadXsd(string filePath)
+        public LoadXsdData LoadXsd(string filePath, bool compile = true)
+        {
+            return LoadXsds(new List<string> { filePath }, compile);
+        }
+
+        public LoadXsdData LoadXsds(List<string> filePaths, bool compile = true)
         {
             var result = new LoadXsdData();
             var schemaSet = new XmlSchemaSet();
             schemaSet.ValidationEventHandler += (s, e) => result.Data.Add(e);
-            result.Schema = schemaSet.Add(null, filePath);
+            foreach (var filePath in filePaths)
+            {
+                result.Schemas.Add(schemaSet.Add(null, filePath));
+            }
             result.SchemaSet = schemaSet;
+            if (compile)
+            {
+                schemaSet.Compile();
+            }
             return result;
         }
 

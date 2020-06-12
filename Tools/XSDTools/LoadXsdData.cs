@@ -1,4 +1,6 @@
-﻿using System.Xml.Schema;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Xml.Schema;
 
 namespace XSDTools
 {
@@ -6,8 +8,10 @@ namespace XSDTools
     {
         public class LoadXsdData : ValidationData
         {
-            public XmlSchema Schema { get; set; }
+            public List<XmlSchema> Schemas { get; set; } = new List<XmlSchema>();
             public XmlSchemaSet SchemaSet { get; set; }
+
+            public XmlSchema Schema => Schemas.FirstOrDefault();
         }
     }
 }
