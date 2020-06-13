@@ -1,5 +1,7 @@
 ﻿using Prism.Ioc;
+using System.Collections.Generic;
 using XSDTools.DesktopApp.Models;
+using XSDTools.DesktopApp.ViewModels;
 using XSDTools.DesktopApp.Views;
 
 namespace XSDTools.DesktopApp.Services
@@ -16,6 +18,16 @@ namespace XSDTools.DesktopApp.Services
         public ModelsData GetModelsData()
         {
             return containerExtension.Resolve<ModelsDataWindow>().ShowAsDialog();
+        }
+
+        public XsdElement GetXsdElement(List<XsdElement> xsdElements)
+        {
+            var dataContext = containerExtension.Resolve<XsdTreeViewModel>();
+            dataContext.SetNodes(xsdElements);
+            var window = containerExtension.Resolve<XsdTreeWindow>();
+            window.DataContext = dataContext;
+            window.ShowDialog();
+            return dataContext.SelectedXsdElement;
         }
     }
 }

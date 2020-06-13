@@ -43,7 +43,9 @@ namespace XSDTools.DesktopApp.ViewModels
 
             try
             {
-
+                var xsdMap = xsdProcessor.GetXsdMap(sourceFile);
+                // TODO - check xsdMap correctness; check is any element in xsdMap
+                windowsService.GetXsdElement(xsdMap.XsdElements);
             }
             catch (Exception exc)
             {
