@@ -38,7 +38,13 @@ namespace XSDTools.DesktopApp.ViewModels
 
         public XsdElement SelectedXsdElement => SelectedNode?.XsdElement;
 
-        public void SetNodes(List<XsdElement> elements, XsdTreeNodeViewModel parentNode = null)
+        public void Setup(List<XsdElement> elements)
+        {
+            SetNodes(elements);
+            ExpandRootNodes();
+        }
+
+        private void SetNodes(List<XsdElement> elements, XsdTreeNodeViewModel parentNode = null)
         {
             foreach (var element in elements)
             {
@@ -57,6 +63,14 @@ namespace XSDTools.DesktopApp.ViewModels
                     parentNode.Nodes.Add(newNode);
                 }
                 SetNodes(element.Children, newNode);
+            }
+        }
+
+        private void ExpandRootNodes()
+        {
+            foreach (var node in Nodes)
+            {
+                node.IsExpanded = true;
             }
         }
     }

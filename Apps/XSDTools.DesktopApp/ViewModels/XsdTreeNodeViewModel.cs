@@ -6,6 +6,7 @@ namespace XSDTools.DesktopApp.ViewModels
     public class XsdTreeNodeViewModel : BindableBase
     {
         private string name = string.Empty;
+        private bool isExpanded;
         private ObservableCollection<XsdTreeNodeViewModel> nodes = new ObservableCollection<XsdTreeNodeViewModel>();
 
         public string Name
@@ -18,6 +19,12 @@ namespace XSDTools.DesktopApp.ViewModels
         {
             get => nodes;
             set => SetProperty(ref nodes, value);
+        }
+
+        public bool IsExpanded
+        {
+            get => isExpanded;
+            set => SetProperty(ref isExpanded, value);
         }
 
         public XsdElement XsdElement { get; set; }

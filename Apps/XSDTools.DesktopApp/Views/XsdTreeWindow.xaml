@@ -16,6 +16,11 @@
                 Width="400"
                 Height="500"
                 ItemsSource="{Binding Nodes}">
+                <TreeView.Resources>
+                    <Style TargetType="{x:Type TreeViewItem}">
+                        <Setter Property="IsExpanded" Value="{Binding IsExpanded}" />
+                    </Style>
+                </TreeView.Resources>
                 <TreeView.ItemTemplate>
                     <HierarchicalDataTemplate ItemsSource="{Binding Nodes}">
                         <TextBlock Margin="3" Text="{Binding Name}" />

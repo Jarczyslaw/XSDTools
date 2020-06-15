@@ -23,7 +23,7 @@ namespace XSDTools.DesktopApp.Services
         public XsdElement GetXsdElement(List<XsdElement> xsdElements)
         {
             var dataContext = containerExtension.Resolve<XsdTreeViewModel>();
-            dataContext.SetNodes(xsdElements);
+            dataContext.Setup(xsdElements);
             var window = containerExtension.Resolve<XsdTreeWindow>();
             window.DataContext = dataContext;
             window.ShowDialog();
