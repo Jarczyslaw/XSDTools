@@ -8,6 +8,8 @@ namespace XSDTools
     {
         public List<ValidationEventArgs> Data { get; set; } = new List<ValidationEventArgs>();
 
+        public bool HasData => Data.Count > 0;
+
         public List<ValidationEventArgs> Errors
         {
             get

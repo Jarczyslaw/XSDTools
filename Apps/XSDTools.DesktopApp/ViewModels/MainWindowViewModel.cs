@@ -43,13 +43,34 @@ namespace XSDTools.DesktopApp.ViewModels
 
             try
             {
+                IsBusy = true;
+                StartLog($"Getting elements from {sourceFile}");
+
                 var xsdMap = xsdProcessor.GetXsdMap(sourceFile);
-                // TODO - check xsdMap correctness; check is any element in xsdMap
+                IsBusy = false;
+
+                LogValidationData(xsdMap);
+                if (xsdMap.HasErrors)
+                {
+                    dialogsService.ShowError("Errors occurred while loading the xsd file");
+                    return;
+                }
+
+                if (xsdMap.XsdElements.Count == 0)
+                {
+                    dialogsService.ShowError("There are no defined elements in selected xsd file");
+                    return;
+                }
+
                 windowsService.GetXsdElement(xsdMap.XsdElements);
             }
             catch (Exception exc)
             {
                 dialogsService.ShowException(exc);
+            }
+            finally
+            {
+                IsBusy = false;
             }
         });
 
@@ -85,7 +106,6 @@ namespace XSDTools.DesktopApp.ViewModels
                 {
                     AddLog("\t" + processedFile);
                 }
-                AddLog("Done!");
             }
             catch (Exception exc)
             {
@@ -221,6 +241,29 @@ namespace XSDTools.DesktopApp.ViewModels
         {
             ClearLogs();
             AddLog(message);
+        }
+
+        private void LogValidationData(ValidationData data)
+        {
+            if (data.HasErrors)
+            {
+                AddLog($"Errors ({data.ErrorsCount}):");
+                for (int i = 0; i < data.ErrorsCount; i++)
+                {
+                    var error = data.Errors[i];
+                    AddLog($"\t{i + 1}. {error.Message}");
+                }
+            }
+
+            if (data.HasWarnings)
+            {
+                AddLog($"Warnings ({data.WarningsCount}):");
+                for (int i = 0; i < data.WarningsCount; i++)
+                {
+                    var warning = data.Warnings[i];
+                    AddLog($"\t{i + 1}. {warning.Message}");
+                }
+            }
         }
     }
 }
