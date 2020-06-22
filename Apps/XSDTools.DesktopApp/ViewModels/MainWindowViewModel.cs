@@ -5,6 +5,7 @@ using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using XSDTools.DesktopApp.Services;
 
 namespace XSDTools.DesktopApp.ViewModels
@@ -33,7 +34,7 @@ namespace XSDTools.DesktopApp.ViewModels
             XsdExePath = appSettings.XsdExePath;
         }
 
-        public DelegateCommand ShowXsdElementsCommand => new DelegateCommand(() =>
+        public DelegateCommand ShowXsdElementsCommand => new DelegateCommand(async () =>
         {
             var sourceFile = dialogsService.OpenFile("Select XSD file...", null, xsdFilter);
             if (string.IsNullOrEmpty(sourceFile))
@@ -43,10 +44,10 @@ namespace XSDTools.DesktopApp.ViewModels
 
             try
             {
-                IsBusy = true;
                 StartLog($"Getting elements from {sourceFile}");
 
-                var xsdMap = xsdProcessor.GetXsdMap(sourceFile);
+                IsBusy = true;
+                var xsdMap = await Task.Run(() => xsdProcessor.GetXsdMap(sourceFile));
                 IsBusy = false;
 
                 LogValidationData(xsdMap);
@@ -90,9 +91,9 @@ namespace XSDTools.DesktopApp.ViewModels
 
             try
             {
-                IsBusy = true;
                 StartLog($"Removing external dependencies from {sourceFile}");
 
+                IsBusy = true;
                 var targetFile = Path.Combine(targetFolder, Path.GetFileName(sourceFile));
                 if (sourceFile != targetFile)
                 {
@@ -100,6 +101,7 @@ namespace XSDTools.DesktopApp.ViewModels
                 }
 
                 var processedFiles = await xsdProcessor.RemoveExternalDependenciesFromFile(targetFile);
+                IsBusy = false;
 
                 AddLog($"Processed files ({processedFiles.Count}):");
                 foreach (var processedFile in processedFiles)
@@ -117,7 +119,7 @@ namespace XSDTools.DesktopApp.ViewModels
             }
         });
 
-        public DelegateCommand GenerateModelsCommand => new DelegateCommand(() =>
+        public DelegateCommand GenerateModelsCommand => new DelegateCommand(async () =>
         {
             if (!XsdExePathSet && !FindXsdExe())
             {
@@ -156,12 +158,12 @@ namespace XSDTools.DesktopApp.ViewModels
             try
             {
                 IsBusy = true;
-                var output = xsdProcessor.CreateModels(XsdExePath, files, targetModelsFile, modelsData.Namespace);
+                var output = await Task.Run(() => xsdProcessor.CreateModels(XsdExePath, files, targetModelsFile, modelsData.Namespace));
+                IsBusy = false;
+
                 AddLog("Executed command: " + output.Command);
                 AddLog("xsd.exe output:");
                 AddLog(output.Output);
-
-                IsBusy = false;
 
                 if (output.Valid && dialogsService.ShowYesNoQuestion("Do you want to open models folder?"))
                 {

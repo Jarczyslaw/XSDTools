@@ -23,12 +23,16 @@
                 </Grid.RowDefinitions>
 
                 <Label Content="File name (without extension):" />
-                <TextBox x:Name="tbFileName" Grid.Column="1" />
+                <TextBox
+                    x:Name="tbFileName"
+                    Grid.Column="1"
+                    Text="Models" />
                 <Label Grid.Row="1" Content="Namespace:" />
                 <TextBox
                     x:Name="tbNamespace"
                     Grid.Row="1"
-                    Grid.Column="1" />
+                    Grid.Column="1"
+                    Text="Models" />
 
             </Grid>
         </GroupBox>
