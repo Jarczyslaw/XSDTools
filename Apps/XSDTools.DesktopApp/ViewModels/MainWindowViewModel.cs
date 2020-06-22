@@ -22,6 +22,7 @@ namespace XSDTools.DesktopApp.ViewModels
         private readonly XsdProcessor xsdProcessor = new XsdProcessor();
 
         private readonly List<DialogFilterPair> xsdFilter = new List<DialogFilterPair> { new DialogFilterPair("xsd") };
+        private readonly List<DialogFilterPair> xmlFilter = new List<DialogFilterPair> { new DialogFilterPair("xml") };
 
         public MainWindowViewModel(IDialogsService dialogsService, IAppSettings appSettings,
             IWindowsService windowsService, ISystemService systemService)
@@ -186,6 +187,51 @@ namespace XSDTools.DesktopApp.ViewModels
 
         public DelegateCommand ValidateXmlCommand => new DelegateCommand(() =>
         {
+            var xmlFile = dialogsService.OpenFile("Select XML file...", null, xmlFilter);
+            if (string.IsNullOrEmpty(xmlFile))
+            {
+                return;
+            }
+
+            ClearLogs();
+            try
+            {
+                xsdProcessor.XmlProcessor.ValidateXmlFile(xmlFile, true);
+            }
+            catch (Exception exc)
+            {
+                AddLog("Error while parsing selected XML file: " + exc.Message);
+                return;
+            }
+
+            var xsdFile = dialogsService.OpenFile("Select XSD file...", null, xsdFilter);
+            if (string.IsNullOrEmpty(xsdFile))
+            {
+                return;
+            }
+
+            try
+            {
+                StartLog($"Validating {xmlFile} against {xsdFile} schema");
+
+                IsBusy = true;
+                var result = xsdProcessor.ValidateXml(xmlFile, xsdFile);
+                IsBusy = false;
+
+                LogValidationData(result);
+                if (!result.HasData)
+                {
+                    AddLog("Validation passed correctly!");
+                }
+            }
+            catch (Exception exc)
+            {
+                dialogsService.ShowException(exc);
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         });
 
         public DelegateCommand SetXsdExePathCommand => new DelegateCommand(() => FindXsdExe());

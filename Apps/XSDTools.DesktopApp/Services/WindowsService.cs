@@ -1,5 +1,6 @@
 ﻿using Prism.Ioc;
 using System.Collections.Generic;
+using System.Windows;
 using XSDTools.DesktopApp.Models;
 using XSDTools.DesktopApp.ViewModels;
 using XSDTools.DesktopApp.Views;
@@ -25,6 +26,7 @@ namespace XSDTools.DesktopApp.Services
             var dataContext = containerExtension.Resolve<XsdTreeViewModel>();
             dataContext.Setup(xsdElements, selectionEnabled);
             var window = containerExtension.Resolve<XsdTreeWindow>();
+            window.Owner = Application.Current.MainWindow;
             window.DataContext = dataContext;
             window.ShowDialog();
             return dataContext.SelectedXsdElement;

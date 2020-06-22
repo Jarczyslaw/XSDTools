@@ -10,9 +10,9 @@ namespace XSDTools
 {
     public class XsdProcessor
     {
-        private readonly XmlProcessor xmlProcessor = new XmlProcessor();
-        private readonly ProcessLauncher processLauncher = new ProcessLauncher();
-        private readonly XsdMapper xsdMapper = new XsdMapper();
+        public XmlProcessor XmlProcessor { get; } = new XmlProcessor();
+        public ProcessLauncher ProcessLauncher { get; } = new ProcessLauncher();
+        public XsdMapper XsdMapper { get; } = new XsdMapper();
 
         public Task<List<string>> RemoveExternalDependenciesFromFile(string filePath)
         {
@@ -43,7 +43,7 @@ namespace XSDTools
                 if (!outputFilePaths.Contains(inputFilePath))
                 {
                     outputFilePaths.Add(inputFilePath);
-                    var dependencies = xmlProcessor.ReplaceExternalDependencies(inputFilePath);
+                    var dependencies = XmlProcessor.ReplaceExternalDependencies(inputFilePath);
                     var newDependencies = new List<string>();
                     foreach (var dependency in dependencies)
                     {
@@ -69,7 +69,7 @@ namespace XSDTools
             {
                 hackFilePath = CreateHackFile(modelsFilePath);
                 inputFilePaths.Add(hackFilePath);
-                return processLauncher.RunXsd(xsdExePath, inputFilePaths, Path.GetDirectoryName(modelsFilePath), modelsNamespace);
+                return ProcessLauncher.RunXsd(xsdExePath, inputFilePaths, Path.GetDirectoryName(modelsFilePath), modelsNamespace);
             }
             finally
             {
@@ -126,7 +126,7 @@ namespace XSDTools
             return result;
         }
 
-        public ValidationData ValidateXml(string xsdPath, string xmlPath)
+        public ValidationData ValidateXml(string xmlPath, string xsdPath)
         {
             var result = new ValidationData();
             var loadXsdData = LoadXsd(xsdPath);
@@ -148,7 +148,7 @@ namespace XSDTools
             {
                 return result;
             }
-            result.XsdElements = xsdMapper.GetXsdElements(loadData.Schema);
+            result.XsdElements = XsdMapper.GetXsdElements(loadData.Schema);
             return result;
         }
     }

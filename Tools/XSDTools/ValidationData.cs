@@ -14,7 +14,7 @@ namespace XSDTools
         {
             get
             {
-                if (Data == null)
+                if (Data != null)
                 {
                     return Data.Where(d => d.Severity == XmlSeverityType.Error)
                         .ToList();
@@ -23,7 +23,7 @@ namespace XSDTools
             }
         }
 
-        public bool HasErrors => Errors != null;
+        public bool HasErrors => ErrorsCount > 0;
 
         public int ErrorsCount => Errors == null ? 0 : Errors.Count;
 
@@ -31,7 +31,7 @@ namespace XSDTools
         {
             get
             {
-                if (Data == null)
+                if (Data != null)
                 {
                     return Data.Where(d => d.Severity == XmlSeverityType.Warning)
                         .ToList();
@@ -40,7 +40,7 @@ namespace XSDTools
             }
         }
 
-        public bool HasWarnings => Warnings != null;
+        public bool HasWarnings => WarningsCount > 0;
 
         public int WarningsCount => Warnings == null ? 0 : Warnings.Count;
     }

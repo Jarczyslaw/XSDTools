@@ -18,6 +18,7 @@ namespace XSDTools.DesktopApp.Views
 
         public ModelsData ShowAsDialog()
         {
+            Owner = Application.Current.MainWindow;
             ShowDialog();
             return modelsData;
         }

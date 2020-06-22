@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace XSDTools
 {
@@ -86,6 +87,19 @@ namespace XSDTools
                 result.Add(node);
             }
             return result;
+        }
+
+        public bool ValidateXmlFile(string filePath, bool throwException = false)
+        {
+            try
+            {
+                XDocument.Parse(File.ReadAllText(filePath));
+                return true;
+            }
+            catch when (!throwException)
+            {
+                return false;
+            }
         }
     }
 }
