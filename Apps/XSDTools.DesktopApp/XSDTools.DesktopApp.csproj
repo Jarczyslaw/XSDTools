@@ -130,6 +130,14 @@
       <Project>{7519097d-59ff-4717-a043-c083a7aa9a5d}</Project>
       <Name>JToolbox.Desktop.Dialogs</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\JToolbox\WPF\JToolbox.WPF.Core\JToolbox.WPF.Core.csproj">
+      <Project>{56bee9b3-2fcb-46e7-a837-d07f0bfcbd98}</Project>
+      <Name>JToolbox.WPF.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\JToolbox\WPF\JToolbox.WPF.UI\JToolbox.WPF.UI.csproj">
+      <Project>{9594d7ee-c5d6-4f07-8f3e-63b7c83e21d0}</Project>
+      <Name>JToolbox.WPF.UI</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Tools\XmlSampleGenerator\XmlSampleGenerator.csproj">
       <Project>{44f03b5d-002e-442f-b0e7-04ad827e7370}</Project>
       <Name>XmlSampleGenerator</Name>

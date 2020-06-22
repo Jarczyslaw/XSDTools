@@ -27,6 +27,8 @@ namespace XSDTools.DesktopApp.ViewModels
             set => SetProperty(ref isExpanded, value);
         }
 
+        public string Description => XsdElement.XsdAnnotation == null ? string.Empty : XsdElement.XsdAnnotation.Value;
+
         public XsdElement XsdElement { get; set; }
     }
 }
