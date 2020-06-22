@@ -1,8 +1,9 @@
-﻿using System.Windows;
+﻿using JToolbox.WPF.UI;
+using System.Windows;
 
 namespace XSDTools.DesktopApp.Views
 {
-    public partial class XsdTreeWindow : Window
+    public partial class XsdTreeWindow : WindowBase
     {
         public XsdTreeWindow()
         {

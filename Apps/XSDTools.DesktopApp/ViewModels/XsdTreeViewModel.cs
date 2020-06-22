@@ -1,14 +1,34 @@
-﻿using Prism.Mvvm;
+﻿using JToolbox.Desktop.Dialogs;
+using JToolbox.WPF.Core.Awareness;
+using Prism.Commands;
+using Prism.Mvvm;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace XSDTools.DesktopApp.ViewModels
 {
-    // TODO - dorobić selectedItem, dorobić tooltipy
-    public class XsdTreeViewModel : BindableBase
+    public class XsdTreeViewModel : BindableBase, ICloseSource
     {
+        private readonly IDialogsService dialogsService;
         private ObservableCollection<XsdTreeNodeViewModel> nodes = new ObservableCollection<XsdTreeNodeViewModel>();
         private XsdTreeNodeViewModel selectedNode;
+
+        public XsdTreeViewModel(IDialogsService dialogsService)
+        {
+            this.dialogsService = dialogsService;
+        }
+
+        public DelegateCommand SelectCommand => new DelegateCommand(() =>
+        {
+            if (SelectedNode == null)
+            {
+                dialogsService.ShowError("No element selected");
+                return;
+            }
+
+            OnClose?.Invoke();
+        });
 
         public ObservableCollection<XsdTreeNodeViewModel> Nodes
         {
@@ -24,8 +44,12 @@ namespace XSDTools.DesktopApp.ViewModels
 
         public XsdElement SelectedXsdElement => SelectedNode?.XsdElement;
 
-        public void Setup(List<XsdElement> elements)
+        public bool SelectionEnabled { get; private set; }
+        public Action OnClose { get; set; }
+
+        public void Setup(List<XsdElement> elements, bool selectionEnabled)
         {
+            SelectionEnabled = selectionEnabled;
             SetNodes(elements);
             ExpandRootNodes();
         }

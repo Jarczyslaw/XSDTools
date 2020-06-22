@@ -1,11 +1,13 @@
-﻿<Window
+﻿<ui:WindowBase
     x:Class="XSDTools.DesktopApp.Views.XsdTreeWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:XSDTools.DesktopApp.Controls"
     xmlns:conv="clr-namespace:JToolbox.WPF.UI.Converters;assembly=JToolbox.WPF.UI"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:XSDTools.DesktopApp.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="clr-namespace:JToolbox.WPF.UI;assembly=JToolbox.WPF.UI"
     Title="XSDTools"
     ResizeMode="NoResize"
     SizeToContent="WidthAndHeight"
@@ -13,14 +15,16 @@
     mc:Ignorable="d">
     <Window.Resources>
         <conv:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
+        <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     </Window.Resources>
     <StackPanel>
         <GroupBox Header="XSD elements">
-            <TreeView
+            <controls:XsdNodesTreeView
                 Width="400"
                 Height="500"
-                ItemsSource="{Binding Nodes}">
-                <TreeView.Resources>
+                ItemsSource="{Binding Nodes}"
+                SelectedItemEx="{Binding SelectedNode, Mode=OneWayToSource}">
+                <controls:XsdNodesTreeView.Resources>
                     <Style TargetType="TreeViewItem">
                         <Setter Property="IsExpanded" Value="{Binding IsExpanded}" />
                         <Setter Property="ToolTip">
@@ -32,17 +36,29 @@
                             </Setter.Value>
                         </Setter>
                     </Style>
-                </TreeView.Resources>
-                <TreeView.ItemTemplate>
+                </controls:XsdNodesTreeView.Resources>
+                <controls:XsdNodesTreeView.ItemTemplate>
                     <HierarchicalDataTemplate ItemsSource="{Binding Nodes}">
                         <TextBlock Margin="3" Text="{Binding Name}" />
                     </HierarchicalDataTemplate>
-                </TreeView.ItemTemplate>
-            </TreeView>
+                </controls:XsdNodesTreeView.ItemTemplate>
+            </controls:XsdNodesTreeView>
         </GroupBox>
-        <UniformGrid Columns="2">
-            <Button Content="Accept" IsDefault="True" />
-            <Button Content="Close" IsCancel="True" />
-        </UniformGrid>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Button
+                Command="{Binding SelectCommand}"
+                Content="Select"
+                IsDefault="True"
+                Visibility="{Binding SelectionEnabled, Converter={StaticResource BoolToVisibilityConverter}}" />
+            <Button
+                Grid.Column="1"
+                Content="Close"
+                IsCancel="True" />
+        </Grid>
     </StackPanel>
-</Window>
+</ui:WindowBase>

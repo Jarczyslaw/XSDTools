@@ -63,7 +63,7 @@ namespace XSDTools.DesktopApp.ViewModels
                     return;
                 }
 
-                windowsService.GetXsdElement(xsdMap.XsdElements);
+                windowsService.GetXsdElement(xsdMap.XsdElements, false);
             }
             catch (Exception exc)
             {

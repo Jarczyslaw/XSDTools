@@ -56,6 +56,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controls\XsdNodesTreeView.cs" />
     <Compile Include="ViewModels\XsdTreeNodeViewModel.cs" />
     <Compile Include="ViewModels\XsdTreeViewModel.cs" />
     <Compile Include="Views\XsdTreeWindow.xaml.cs">

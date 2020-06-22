@@ -51,8 +51,10 @@
       <DependentUpon>CenterContainer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ExtendedDataGrid.cs" />
+    <Compile Include="Controls\ExtendedTreeView.cs" />
     <Compile Include="Converters\BoolNegationConverter.cs" />
     <Compile Include="Converters\BoolToValueConverter.cs" />
+    <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Converters\DictionaryConverter.cs" />
     <Compile Include="Converters\MultipleConverterBase.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />

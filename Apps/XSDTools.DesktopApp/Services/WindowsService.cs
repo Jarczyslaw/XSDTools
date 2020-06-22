@@ -20,10 +20,10 @@ namespace XSDTools.DesktopApp.Services
             return containerExtension.Resolve<ModelsDataWindow>().ShowAsDialog();
         }
 
-        public XsdElement GetXsdElement(List<XsdElement> xsdElements)
+        public XsdElement GetXsdElement(List<XsdElement> xsdElements, bool selectionEnabled)
         {
             var dataContext = containerExtension.Resolve<XsdTreeViewModel>();
-            dataContext.Setup(xsdElements);
+            dataContext.Setup(xsdElements, selectionEnabled);
             var window = containerExtension.Resolve<XsdTreeWindow>();
             window.DataContext = dataContext;
             window.ShowDialog();
