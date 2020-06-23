@@ -2,6 +2,7 @@
 using JToolbox.Desktop.Dialogs;
 using Prism.Commands;
 using Prism.Mvvm;
+using Prism.Services.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -37,7 +38,7 @@ namespace XSDTools.DesktopApp.ViewModels
 
         public DelegateCommand ShowXsdElementsCommand => new DelegateCommand(async () =>
         {
-            var sourceFile = dialogsService.OpenFile("Select XSD file...", null, xsdFilter);
+            var sourceFile = SelectXsdFile();
             if (string.IsNullOrEmpty(sourceFile))
             {
                 return;
@@ -78,7 +79,7 @@ namespace XSDTools.DesktopApp.ViewModels
 
         public DelegateCommand RemoveExternalDependenciesCommand => new DelegateCommand(async () =>
         {
-            var sourceFile = dialogsService.OpenFile("Select XSD file...", null, xsdFilter);
+            var sourceFile = SelectXsdFile();
             if (string.IsNullOrEmpty(sourceFile))
             {
                 return;
@@ -127,7 +128,7 @@ namespace XSDTools.DesktopApp.ViewModels
                 return;
             }
 
-            var files = dialogsService.OpenFiles("Open xsd files...", null, xsdFilter);
+            var files = dialogsService.OpenFiles("Select xsd files...", null, xsdFilter);
             if (files == null || files.Count == 0)
             {
                 return;
@@ -183,6 +184,17 @@ namespace XSDTools.DesktopApp.ViewModels
 
         public DelegateCommand GenerateSampleXmlCommand => new DelegateCommand(() =>
         {
+            var xsdFile = SelectXsdFile();
+            if (string.IsNullOrEmpty(xsdFile))
+            {
+                return;
+            }
+
+            var targetFile = dialogsService.SaveFile("Save XML file...", null, "sample.xml", new DialogFilterPair("xml"));
+            if (string.IsNullOrEmpty(targetFile))
+            {
+                return;
+            }
         });
 
         public DelegateCommand ValidateXmlCommand => new DelegateCommand(() =>
@@ -204,7 +216,7 @@ namespace XSDTools.DesktopApp.ViewModels
                 return;
             }
 
-            var xsdFile = dialogsService.OpenFile("Select XSD file...", null, xsdFilter);
+            var xsdFile = SelectXsdFile();
             if (string.IsNullOrEmpty(xsdFile))
             {
                 return;
@@ -312,6 +324,11 @@ namespace XSDTools.DesktopApp.ViewModels
                     AddLog($"\t{i + 1}. {warning.Message}");
                 }
             }
+        }
+
+        private string SelectXsdFile()
+        {
+            return dialogsService.OpenFile("Select XSD file...", null, xsdFilter);
         }
     }
 }
