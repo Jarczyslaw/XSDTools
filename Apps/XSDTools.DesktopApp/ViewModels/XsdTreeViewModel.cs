@@ -27,6 +27,7 @@ namespace XSDTools.DesktopApp.ViewModels
                 return;
             }
 
+            SelectedXsdElement = SelectedNode.XsdElement;
             OnClose?.Invoke();
         });
 
@@ -42,7 +43,7 @@ namespace XSDTools.DesktopApp.ViewModels
             set => SetProperty(ref selectedNode, value);
         }
 
-        public XsdElement SelectedXsdElement => SelectedNode?.XsdElement;
+        public XsdElement SelectedXsdElement { get; private set; }
 
         public bool SelectionEnabled { get; private set; }
         public Action OnClose { get; set; }
