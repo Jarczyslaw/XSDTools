@@ -9,5 +9,11 @@ namespace XSDTools.DesktopApp.Views
         {
             InitializeComponent();
         }
+
+        public XsdTreeWindow(object dataContext)
+            : this()
+        {
+            DataContext = dataContext;
+        }
     }
 }

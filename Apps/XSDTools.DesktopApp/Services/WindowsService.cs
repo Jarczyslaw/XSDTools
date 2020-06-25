@@ -21,13 +21,14 @@ namespace XSDTools.DesktopApp.Services
             return containerExtension.Resolve<ModelsDataWindow>().ShowAsDialog();
         }
 
-        public XsdElement GetXsdElement(List<XsdElement> xsdElements, bool selectionEnabled)
+        public XsdElement ShowXsdElements(List<XsdElement> xsdElements, bool selectionEnabled)
         {
             var dataContext = containerExtension.Resolve<XsdTreeViewModel>();
             dataContext.Setup(xsdElements, selectionEnabled);
-            var window = containerExtension.Resolve<XsdTreeWindow>();
-            window.Owner = Application.Current.MainWindow;
-            window.DataContext = dataContext;
+            var window = new XsdTreeWindow(dataContext)
+            {
+                Owner = Application.Current.MainWindow
+            };
             window.ShowDialog();
             return dataContext.SelectedXsdElement;
         }

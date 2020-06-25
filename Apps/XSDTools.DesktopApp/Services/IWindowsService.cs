@@ -7,6 +7,6 @@ namespace XSDTools.DesktopApp.Services
     {
         ModelsData GetModelsData();
 
-        XsdElement GetXsdElement(List<XsdElement> xsdElements, bool selectionEnabled);
+        XsdElement ShowXsdElements(List<XsdElement> xsdElements, bool selectionEnabled);
     }
 }

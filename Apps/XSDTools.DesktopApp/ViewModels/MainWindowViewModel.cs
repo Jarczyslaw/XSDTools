@@ -54,7 +54,7 @@ namespace XSDTools.DesktopApp.ViewModels
                     return;
                 }
 
-                windowsService.GetXsdElement(map.XsdElements, false);
+                windowsService.ShowXsdElements(map.XsdElements, false);
             }
             catch (Exception exc)
             {
@@ -98,6 +98,11 @@ namespace XSDTools.DesktopApp.ViewModels
                 foreach (var processedFile in processedFiles)
                 {
                     AddLog("\t" + processedFile);
+                }
+
+                if (dialogsService.ShowYesNoQuestion("Do you want to open folder with processed files?"))
+                {
+                    systemService.OpenFolderLocation(targetFolder);
                 }
             }
             catch (Exception exc)
@@ -185,7 +190,7 @@ namespace XSDTools.DesktopApp.ViewModels
                     return;
                 }
 
-                var rootElement = windowsService.GetXsdElement(map.XsdElements, true);
+                var rootElement = windowsService.ShowXsdElements(map.XsdElements, true);
                 if (rootElement == null)
                 {
                     return;
