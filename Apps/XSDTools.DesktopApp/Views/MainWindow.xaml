@@ -6,9 +6,9 @@
     xmlns:xt="http://schemas.xceed.com/wpf/xaml/toolkit"
     Title="XSDTools"
     Width="600"
-    Height="500"
+    Height="700"
     MinWidth="600"
-    MinHeight="500"
+    MinHeight="700"
     prism:ViewModelLocator.AutoWireViewModel="True">
     <Window.Resources>
         <Style TargetType="Button">
