@@ -47,8 +47,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Awareness\ICloseSource.cs" />
+    <Compile Include="Awareness\IDataSource.cs" />
     <Compile Include="Awareness\IOnClosedAware.cs" />
     <Compile Include="Awareness\IOnClosingAware.cs" />
+    <Compile Include="Awareness\IOnInitializedAware.cs" />
     <Compile Include="Awareness\IOnKeyDownAware.cs" />
     <Compile Include="Awareness\IOnLoadedAware.cs" />
     <Compile Include="Awareness\IOnShowAware.cs" />

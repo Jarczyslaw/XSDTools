@@ -8,12 +8,12 @@ namespace JToolbox.WPF.UI
 {
     public class WindowEvents
     {
-        public WindowEvents(Window window)
+        public WindowEvents(WindowBase window)
         {
             Window = window;
         }
 
-        public Window Window { get; }
+        public WindowBase Window { get; }
         public bool WindowRendered { get; private set; }
         public bool WindowInitialized { get; private set; }
         private object DataContext => Window.DataContext;
@@ -26,6 +26,7 @@ namespace JToolbox.WPF.UI
             Window.Closed += Window_Closed;
             Window.Loaded += Window_Loaded;
             Window.KeyDown += Window_KeyDown;
+            Window.DataContextChanged += Window_DataContextChanged;
         }
 
         public void Detach()
@@ -36,21 +37,58 @@ namespace JToolbox.WPF.UI
             Window.Closed -= Window_Closed;
             Window.Loaded -= Window_Loaded;
             Window.KeyDown -= Window_KeyDown;
+            Window.DataContextChanged -= Window_DataContextChanged;
+        }
+
+        private void SetupCloseEvent(object dataContext, bool attach)
+        {
+            if (dataContext is ICloseSource closeSource)
+            {
+                closeSource.OnClose -= Window.Close;
+                if (attach)
+                {
+                    closeSource.OnClose += Window.Close;
+                }
+            }
+        }
+
+        private void SetupDataEvent(object dataContext, bool attach)
+        {
+            if (dataContext is IDataSource dataSource)
+            {
+                dataSource.OnData -= Window.OnData;
+                if (attach)
+                {
+                    dataSource.OnData += Window.OnData;
+                }
+            }
+        }
+
+        private void SetupSourceEvents(object dataContext, bool attach)
+        {
+            SetupCloseEvent(dataContext, attach);
+            SetupDataEvent(dataContext, attach);
+        }
+
+        #region Window events
+
+        private void Window_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            SetupSourceEvents(e.OldValue, false);
+            SetupSourceEvents(e.NewValue, true);
         }
 
         private void Window_Closed(object sender, EventArgs e)
         {
             (DataContext as IOnClosedAware)?.OnClosed();
+            SetupSourceEvents(DataContext, false);
         }
 
         private void Window_Initialized(object sender, EventArgs e)
         {
             if (!WindowInitialized)
             {
-                if (DataContext is ICloseSource closeAware)
-                {
-                    closeAware.OnClose += Window.Close;
-                }
+                (DataContext as IOnInitializedAware)?.OnInitialized();
                 WindowInitialized = true;
             }
         }
@@ -87,5 +125,7 @@ namespace JToolbox.WPF.UI
                 keyDownAware.OnKeyDown(e);
             }
         }
+
+        #endregion Window events
     }
 }

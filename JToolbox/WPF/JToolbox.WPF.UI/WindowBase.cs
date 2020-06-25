@@ -4,18 +4,22 @@ namespace JToolbox.WPF.UI
 {
     public class WindowBase : Window
     {
-        private readonly WindowEvents windowEvents;
-
         public WindowBase()
         {
-            windowEvents = new WindowEvents(this);
-            windowEvents.Attach();
+            WindowEvents = new WindowEvents(this);
+            WindowEvents.Attach();
         }
 
         public WindowBase(object dataContext)
             : this()
         {
             DataContext = dataContext;
+        }
+
+        public WindowEvents WindowEvents { get; }
+
+        public virtual void OnData(object data)
+        {
         }
     }
 }
