@@ -62,33 +62,31 @@ namespace XSDTools
             }
         }
 
-        public ProcessLauncherOutput CreateModels(string xsdExePath, List<string> inputFilePaths, string modelsFilePath, string modelsNamespace)
+        public ProcessLauncherOutput CreateModels(string xsdExePath, List<string> inputFilePaths, string modelsFolder, string modelsFileName, string modelsNamespace)
         {
-            var hackFilePath = string.Empty;
+            var nameFilePath = string.Empty;
             try
             {
-                hackFilePath = CreateHackFile(modelsFilePath);
-                inputFilePaths.Add(hackFilePath);
-                return ProcessLauncher.RunXsd(xsdExePath, inputFilePaths, Path.GetDirectoryName(modelsFilePath), modelsNamespace);
+                nameFilePath = CreateNameFile(modelsFolder, modelsFileName);
+                inputFilePaths.Add(nameFilePath);
+                return ProcessLauncher.RunXsdExe(xsdExePath, inputFilePaths, modelsFolder, modelsNamespace);
             }
             finally
             {
-                if (File.Exists(hackFilePath))
+                if (File.Exists(nameFilePath))
                 {
-                    File.Delete(hackFilePath);
+                    File.Delete(nameFilePath);
                 }
             }
         }
 
-        private string CreateHackFile(string modelsFilePath)
+        private string CreateNameFile(string modelsFolder, string modelsFileName)
         {
-            var hackPath = Path.GetDirectoryName(modelsFilePath);
-            var hackFileName = Path.GetFileNameWithoutExtension(modelsFilePath);
-            var hackFilePath = Path.Combine(hackPath, hackFileName + ".xsd");
-            const string hackFileContent = @"<?xml version=""1.0"" encoding=""utf-8""?>
+            var nameFilePath = Path.Combine(modelsFolder, Path.GetFileNameWithoutExtension(modelsFileName) + ".xsd");
+            const string nameFileContent = @"<?xml version=""1.0"" encoding=""utf-8""?>
 <xs:schema xmlns:xs=""http://www.w3.org/2001/XMLSchema""/>";
-            File.WriteAllText(hackFilePath, hackFileContent);
-            return hackFilePath;
+            File.WriteAllText(nameFilePath, nameFileContent);
+            return nameFilePath;
         }
 
         public List<string> GetXsdFiles(string folderPath)

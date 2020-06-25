@@ -1,8 +1,8 @@
 ﻿using JToolbox.Desktop.Core.Services;
 using JToolbox.Desktop.Dialogs;
+using Microsoft.Xml.XMLGen;
 using Prism.Commands;
 using Prism.Mvvm;
-using Prism.Services.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -48,24 +48,13 @@ namespace XSDTools.DesktopApp.ViewModels
             {
                 StartLog($"Getting elements from {sourceFile}");
 
-                IsBusy = true;
-                var xsdMap = await Task.Run(() => xsdProcessor.GetXsdMap(sourceFile));
-                IsBusy = false;
-
-                LogValidationData(xsdMap);
-                if (xsdMap.HasErrors)
+                var map = await GetXsdMap(sourceFile);
+                if (map == null)
                 {
-                    dialogsService.ShowError("Errors occurred while loading the xsd file");
                     return;
                 }
 
-                if (xsdMap.XsdElements.Count == 0)
-                {
-                    dialogsService.ShowError("There are no defined elements in selected xsd file");
-                    return;
-                }
-
-                windowsService.GetXsdElement(xsdMap.XsdElements, false);
+                windowsService.GetXsdElement(map.XsdElements, false);
             }
             catch (Exception exc)
             {
@@ -146,21 +135,19 @@ namespace XSDTools.DesktopApp.ViewModels
                 return;
             }
 
-            var targetModelsFile = Path.Combine(targetFolder, modelsData.FileName);
-
             StartLog("Creating models from xsd files");
             AddLog("Selected files:");
             foreach (var file in files)
             {
                 AddLog("\t" + file);
             }
-            AddLog("Target models file: " + targetModelsFile);
+            AddLog("Target models file: " + Path.Combine(targetFolder, modelsData.FileName + ".cs"));
             AddLog("Target namespace: " + modelsData.Namespace);
 
             try
             {
                 IsBusy = true;
-                var output = await Task.Run(() => xsdProcessor.CreateModels(XsdExePath, files, targetModelsFile, modelsData.Namespace));
+                var output = await Task.Run(() => xsdProcessor.CreateModels(XsdExePath, files, targetFolder, modelsData.FileName, modelsData.Namespace));
                 IsBusy = false;
 
                 AddLog("Executed command: " + output.Command);
@@ -169,7 +156,7 @@ namespace XSDTools.DesktopApp.ViewModels
 
                 if (output.Valid && dialogsService.ShowYesNoQuestion("Do you want to open models folder?"))
                 {
-                    systemService.OpenFileLocation(targetModelsFile + ".cs");
+                    systemService.OpenFileLocation(output.ModelsFilePath);
                 }
             }
             catch (Exception exc)
@@ -182,7 +169,7 @@ namespace XSDTools.DesktopApp.ViewModels
             }
         });
 
-        public DelegateCommand GenerateSampleXmlCommand => new DelegateCommand(() =>
+        public DelegateCommand GenerateSampleXmlCommand => new DelegateCommand(async () =>
         {
             var xsdFile = SelectXsdFile();
             if (string.IsNullOrEmpty(xsdFile))
@@ -190,14 +177,48 @@ namespace XSDTools.DesktopApp.ViewModels
                 return;
             }
 
-            var targetFile = dialogsService.SaveFile("Save XML file...", null, "sample.xml", new DialogFilterPair("xml"));
-            if (string.IsNullOrEmpty(targetFile))
+            try
             {
-                return;
+                var map = await GetXsdMap(xsdFile);
+                if (map == null)
+                {
+                    return;
+                }
+
+                var rootElement = windowsService.GetXsdElement(map.XsdElements, true);
+                if (rootElement == null)
+                {
+                    return;
+                }
+
+                var targetFile = dialogsService.SaveFile("Save XML file...", null, "sample.xml", new DialogFilterPair("xml"));
+                if (string.IsNullOrEmpty(targetFile))
+                {
+                    return;
+                }
+
+                StartLog($"Creating sample XML file for {xsdFile} schema");
+
+                IsBusy = true;
+                await Task.Run(() => XmlSampleGenerator.CreateSampleFile(xsdFile, rootElement.XsdName, targetFile));
+                IsBusy = false;
+
+                if (dialogsService.ShowYesNoQuestion("File created successfully. Do you want to open its folder?"))
+                {
+                    systemService.OpenFileLocation(targetFile);
+                }
+            }
+            catch (Exception exc)
+            {
+                dialogsService.ShowException(exc);
+            }
+            finally
+            {
+                IsBusy = false;
             }
         });
 
-        public DelegateCommand ValidateXmlCommand => new DelegateCommand(() =>
+        public DelegateCommand ValidateXmlCommand => new DelegateCommand(async () =>
         {
             var xmlFile = dialogsService.OpenFile("Select XML file...", null, xmlFilter);
             if (string.IsNullOrEmpty(xmlFile))
@@ -227,7 +248,7 @@ namespace XSDTools.DesktopApp.ViewModels
                 StartLog($"Validating {xmlFile} against {xsdFile} schema");
 
                 IsBusy = true;
-                var result = xsdProcessor.ValidateXml(xmlFile, xsdFile);
+                var result = await Task.Run(() => xsdProcessor.ValidateXml(xmlFile, xsdFile));
                 IsBusy = false;
 
                 LogValidationData(result);
@@ -329,6 +350,27 @@ namespace XSDTools.DesktopApp.ViewModels
         private string SelectXsdFile()
         {
             return dialogsService.OpenFile("Select XSD file...", null, xsdFilter);
+        }
+
+        private async Task<XsdMapData> GetXsdMap(string sourceFile)
+        {
+            IsBusy = true;
+            var xsdMap = await Task.Run(() => xsdProcessor.GetXsdMap(sourceFile));
+            IsBusy = false;
+
+            LogValidationData(xsdMap);
+            if (xsdMap.HasErrors)
+            {
+                dialogsService.ShowError("Errors occurred while loading the xsd file");
+                return null;
+            }
+
+            if (xsdMap.XsdElements.Count == 0)
+            {
+                dialogsService.ShowError("There are no defined elements in selected xsd file");
+                return null;
+            }
+            return xsdMap;
         }
     }
 }

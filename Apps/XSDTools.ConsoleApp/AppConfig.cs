@@ -9,23 +9,11 @@ namespace XSDTools.ConsoleApp
 
         public string TargetNamespace => GetSetting();
 
-        public string TargetFileName
-        {
-            get
-            {
-                var value = GetSetting();
-                var extension = ".cs";
-                if (!value.EndsWith(extension))
-                {
-                    value = value + extension;
-                }
-                return value;
-            }
-        }
+        public string TargetFileName => GetSetting();
 
-        public string SourceXsdFilesPath => GetSetting();
+        public string SourceXsdFilesFolder => GetSetting();
 
-        public string TargetXsdFilesPath => GetSetting();
+        public string TargetXsdFilesFolder => GetSetting();
 
         public string Validate()
         {
@@ -34,12 +22,12 @@ namespace XSDTools.ConsoleApp
                 return "No path to xsd.exe in app.config provided";
             }
 
-            if (string.IsNullOrEmpty(SourceXsdFilesPath))
+            if (string.IsNullOrEmpty(SourceXsdFilesFolder))
             {
                 return "Insert source files path in app.config file";
             }
 
-            if (string.IsNullOrEmpty(TargetXsdFilesPath))
+            if (string.IsNullOrEmpty(TargetXsdFilesFolder))
             {
                 return "Insert target files path in app.config file";
             }

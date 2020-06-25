@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -21,14 +22,14 @@ namespace XSDTools.ConsoleApp
         public async Task Run()
         {
             view.ShowMessage($"XSD.exe path: {config.XsdExecutablePath}");
-            view.ShowMessage($"XSD source files path: {config.SourceXsdFilesPath}");
-            view.ShowMessage($"XSD target files path: {config.TargetXsdFilesPath}");
+            view.ShowMessage($"XSD source files folder: {config.SourceXsdFilesFolder}");
+            view.ShowMessage($"XSD target files folder: {config.TargetXsdFilesFolder}");
             view.ShowMessage($"Target file name: {config.TargetFileName}");
             view.ShowMessage($"Target namespace: {config.TargetNamespace}\n");
 
             try
             {
-                var inputFiles = xsdProcessor.GetXsdFiles(config.SourceXsdFilesPath);
+                var inputFiles = xsdProcessor.GetXsdFiles(config.SourceXsdFilesFolder);
                 if (inputFiles.Count == 0)
                 {
                     view.ShowMessage("No xsd files found in current directory");
@@ -44,7 +45,7 @@ namespace XSDTools.ConsoleApp
                 var filesToProcess = new List<string>();
                 foreach (var file in inputFiles)
                 {
-                    var targetFile = Path.Combine(config.TargetXsdFilesPath, Path.GetFileName(file));
+                    var targetFile = Path.Combine(config.TargetXsdFilesFolder, Path.GetFileName(file));
                     File.Copy(file, targetFile, true);
                     filesToProcess.Add(targetFile);
                 }
@@ -57,10 +58,18 @@ namespace XSDTools.ConsoleApp
                 }
 
                 view.GetInput("Press ENTER to start generating models");
-                var modelsFilePath = Path.Combine(config.TargetXsdFilesPath, config.TargetFileName);
+                var modelsFilePath = Path.Combine(config.TargetXsdFilesFolder, config.TargetFileName);
                 view.ShowMessage("Running xsd.exe...");
-                xsdProcessor.CreateModels(config.XsdExecutablePath, processedFiles, modelsFilePath, config.TargetNamespace);
-                view.ShowMessage("Finished!");
+                var output = xsdProcessor.CreateModels(config.XsdExecutablePath, processedFiles, config.TargetXsdFilesFolder, config.TargetFileName, config.TargetNamespace);
+                view.ShowMessage(output.Output);
+                if (output.Valid)
+                {
+                    OpenFileLocation(output.ModelsFilePath);
+                }
+                else
+                {
+                    view.ShowMessage("Something went wrong. Models file was not generated");
+                }
             }
             catch (Exception exc)
             {
@@ -68,6 +77,17 @@ namespace XSDTools.ConsoleApp
                 view.ShowMessage(exc.StackTrace);
             }
             view.ShowExitMessage();
+        }
+
+        private void OpenFileLocation(string filePath)
+        {
+            var argument = "/select, \"" + filePath + "\"";
+            StartProcess("explorer.exe", argument);
+        }
+
+        private void StartProcess(string process, string arguments = null)
+        {
+            Process.Start(process, arguments);
         }
     }
 }
