@@ -8,6 +8,27 @@ namespace XSDTools
 
         public int XsdElementsCount => GetXsdElementsCount(XsdElements);
 
+        public int XsdRootElementsCount => XsdElements.Count;
+
+        public List<XsdElement> GetXsdElementsByName(string name)
+        {
+            var result = new List<XsdElement>();
+            GetXsdElementsByName(XsdElements, name, result);
+            return result;
+        }
+
+        private void GetXsdElementsByName(List<XsdElement> elements, string name, List<XsdElement> foundElements)
+        {
+            foreach (var element in elements)
+            {
+                if (element.XsdName == name)
+                {
+                    foundElements.Add(element);
+                }
+                GetXsdElementsByName(element.Children, name, foundElements);
+            }
+        }
+
         private int GetXsdElementsCount(List<XsdElement> elements)
         {
             var count = elements.Count;

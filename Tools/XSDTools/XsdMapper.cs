@@ -20,21 +20,20 @@ namespace XSDTools
         private List<XsdElement> StartTraversing(XmlSchema schema, bool recursive)
         {
             elements.Clear();
-            TraverseXsdElements(schema, recursive);
+            TraverseXsdElements(schema, null, recursive);
             return elements;
-        }
-
-        private void TraverseXsdElements(XmlSchema schema, bool recursive)
-        {
-            foreach (XmlSchemaObject element in schema.Elements.Values)
-            {
-                TraverseXsdElements(element, null, recursive);
-            }
         }
 
         private void TraverseXsdElements(XmlSchemaObject xmlObject, XsdElement parentElement, bool recursive)
         {
-            if (xmlObject is XmlSchemaElement xmlElement)
+            if (xmlObject is XmlSchema xmlSchema)
+            {
+                foreach (XmlSchemaObject element in xmlSchema.Elements.Values)
+                {
+                    TraverseXsdElements(element, null, recursive);
+                }
+            }
+            else if (xmlObject is XmlSchemaElement xmlElement)
             {
                 if (xmlElement.ElementSchemaType is XmlSchemaSimpleType)
                 {
