@@ -1,5 +1,4 @@
 ﻿using JToolbox.WPF.UI;
-using System.Windows;
 
 namespace XSDTools.DesktopApp.Views
 {

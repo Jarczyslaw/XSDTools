@@ -7,7 +7,7 @@
     <ProjectGuid>{A66AF431-DBBF-4373-AFD3-8B6F94F55DE0}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>XSDTools.ConsoleApp</RootNamespace>
-    <AssemblyName>XSDTools.ConsoleApp</AssemblyName>
+    <AssemblyName>XSDToolsApp</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
