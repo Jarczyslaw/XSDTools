@@ -95,7 +95,8 @@ namespace Microsoft.Xml.XMLGen
             }
         }
 
-        public XmlSampleGenerator(string url, XmlQualifiedName rootElem) : this(XmlSchema.Read(new XmlTextReader(url), new ValidationEventHandler(ValidationCallBack)), rootElem)
+        public XmlSampleGenerator(string url, XmlQualifiedName rootElem) 
+            : this(XmlSchema.Read(new XmlTextReader(url), new ValidationEventHandler(ValidationCallBack)), rootElem)
         {
         }
 
@@ -134,13 +135,12 @@ namespace Microsoft.Xml.XMLGen
             AnyType = XmlSchemaType.GetBuiltInComplexType(XmlTypeCode.Item);
         }
 
-        public static void CreateSampleFile(string xsdPath, string rootElement, string xmlPath)
+        public static void CreateSampleFile(string xsdPath, XmlQualifiedName rootElement, string xmlPath)
         {
             using (var textWriter = new XmlTextWriter(xmlPath, null))
             {
                 textWriter.Formatting = Formatting.Indented;
-                XmlQualifiedName qname = new XmlQualifiedName(rootElement);
-                XmlSampleGenerator generator = new XmlSampleGenerator(xsdPath, qname);
+                XmlSampleGenerator generator = new XmlSampleGenerator(xsdPath, rootElement);
                 generator.WriteXml(textWriter);
             }
         }

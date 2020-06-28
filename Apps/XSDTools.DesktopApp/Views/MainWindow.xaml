@@ -59,10 +59,12 @@
             </GroupBox>
             <GroupBox Grid.Row="2" Header="Logs">
                 <TextBox
+                    x:Name="tbLogs"
                     AcceptsReturn="True"
                     HorizontalScrollBarVisibility="Visible"
                     IsReadOnly="True"
                     Text="{Binding Logs}"
+                    TextChanged="tbLogs_TextChanged"
                     TextWrapping="NoWrap"
                     VerticalScrollBarVisibility="Visible" />
             </GroupBox>

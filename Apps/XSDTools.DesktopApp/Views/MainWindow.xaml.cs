@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
 
 namespace XSDTools.DesktopApp.Views
 {
@@ -10,6 +11,11 @@ namespace XSDTools.DesktopApp.Views
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void tbLogs_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            (sender as TextBox)?.ScrollToEnd();
         }
     }
 }
